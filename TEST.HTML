@@ -1,0 +1,1214 @@
+index html 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">VIBE<span>MARKET</span></div>
+
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
+  </div>
+
+  <nav class="nav">
+    <a href="#home" class="nav-link">الرئيسية</a>
+    <a href="#products" class="nav-link">المنتجات</a>
+    <a href="#contact" class="nav-link">تواصل معنا</a>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <h2>طوّر الـ VIBE متاعك</h2>
+  <p>إلكترونيات • LED • Accessories</p>
+</section>
+
+<!-- ================= PRODUCTS ================= -->
+<section class="products" id="products">
+  <h3>منتجاتنا</h3>
+
+  <div class="products-grid">
+
+    <!-- PRODUCT 1 -->
+    <div class="product-card" onclick="goProduct('led')">
+      <img src="images/led.jpg" alt="LED RGB">
+      <h4>LED RGB متعدد الألوان</h4>
+      <p class="price">25 DT</p>
+    </div>
+
+    <!-- PRODUCT 2 -->
+    <div class="product-card" onclick="goProduct('casque')">
+      <img src="images/casce.jpg" alt="Casque Bluetooth">
+      <h4>Casque Bluetooth CAT EAR</h4>
+      <p class="price">28 DT</p>
+    </div>
+
+    <!-- PRODUCT 3 -->
+    <div class="product-card" onclick="goProduct('charger')">
+      <img src="images/charg wyrls.jpg" alt="Wireless Charger">
+      <h4>Haut-Parleur & Wireless Charger</h4>
+      <p class="price">45 DT</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <h3>تواصل معنا</h3>
+  <div class="contact-buttons">
+    <a href="https://wa.me/21620646120" target="_blank" class="btn whatsapp">📱 WhatsApp</a>
+    <a href="https://www.instagram.com/vibe_market_1" target="_blank" class="btn instagram">📸 Instagram</a>
+  </div>
+</section>
+
+<!-- ================= CART ================= -->
+<button class="cart-btn" onclick="openCart()">🛒
+  <span id="cartCount" class="cart-count">0</span>
+</button>
+
+<div id="cartModal" class="modal">
+  <div class="modal-content">
+    <h3>🛒 السلة</h3>
+    <ul id="cartItems"></ul>
+    <p><strong>Total:</strong> <span id="cartTotal">0 DT</span></p>
+    <button class="btn" onclick="closeCart()">إغلاق</button>
+  </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="script.js"></script>
+
+</body>
+</html>
+produict html 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Market - المنتج</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">VIBE<span>MARKET</span></div>
+  <nav class="nav">
+    <a href="index.html" class="nav-link">⬅ الرجوع للمتجر</a>
+  </nav>
+</header>
+
+<!-- ================= PRODUCT PAGE ================= -->
+<section class="product-page">
+  <div class="product-wrapper">
+
+    <!-- IMAGE -->
+    <div class="product-images">
+      <img src="" id="mainImage" class="main-img" alt="Product Image">
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+      <h1 id="pName"></h1>
+
+      <div class="rating">★★★★☆ <span>4.6</span></div>
+
+      <p class="price"><span id="pPrice">0</span> DT</p>
+
+      <p class="stock" id="pStock">✔ En stock</p>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" onclick="openTab('desc')">الوصف</button>
+        <button class="tab" onclick="openTab('specs')">المواصفات</button>
+      </div>
+
+      <div class="tab-content active" id="desc">
+        <p id="pDesc">جاري تحميل الوصف...</p>
+      </div>
+
+      <div class="tab-content" id="specs">
+        • جودة عالية ومضمونة <br>
+        • شحن سريع <br>
+        • أصلي 100%
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions" style="margin-top:20px;">
+         <button class="btn add-cart" onclick="addToCart(); openOrderModal();">
+         إضافة للسلة 🛒
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= ORDER MODAL ================= -->
+<div id="orderModal" class="modal">
+  <div class="modal-content">
+    <h3 style="margin-bottom:15px; color:#7c7cff;">تأكيد الطلب</h3>
+    <input type="text" id="orderName" placeholder="الاسم و اللقب (مثال: محمد بن علي)">
+    <input type="email" id="orderEmail" placeholder="البريد الإلكتروني (اختياري)">
+    <input type="tel" id="orderPhone" placeholder="رقم الهاتف (مثال: 20 123 456)">
+    <input type="text" id="orderLocation" placeholder="العنوان (الولاية / المعتمدية)">
+
+
+    <button class="btn" onclick="submitOrder()" style="width:100%; background:#25d366;">
+      تأكيد عبر واتساب 📱
+    </button>
+
+    <button class="btn toggle" onclick="closeOrderModal()" style="margin-top:10px;">
+      إلغاء
+    </button>
+  </div>
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script src="product.js"></script>
+
+</body>
+</html>
+product js
+// ================== PRODUCTS DATA ==================
+const products = {
+  led: {
+    name: "LED RGB متعدد الألوان",
+    price: 25,
+    desc: "أضواء LED RGB متميزة لتزيين الغرف مع جهاز تحكم.",
+    img: "images/led.jpg",
+    stock: 10
+  },
+  casque: {
+    name: "Casque Bluetooth CAT EAR",
+    price: 28,
+    desc: "سماعات بلوتوث عصرية مع إضاءة LED.",
+    img: "images/casce.jpg",
+    stock: 5
+  },
+  charger: {
+    name: "Haut-Parleur & Wireless Charger",
+    price: 45,
+    desc: "مكبر صوت بلوتوث مع شاحن لاسلكي سريع.",
+    img: "images/charg wyrls.jpg",
+    stock: 7
+  }
+};
+
+// ================== LOAD PRODUCT ==================
+function loadProduct(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const product = products[id];
+
+  if(!product){
+    console.error("❌ Product not found");
+    return;
+  }
+
+  // Elements (حسب HTML متاعك)
+  const img   = document.getElementById("mainImage");
+  const name  = document.getElementById("pName");
+  const price = document.getElementById("pPrice");
+  const desc  = document.getElementById("pDesc");
+  const stock = document.getElementById("pStock");
+
+  if(img)   img.src = product.img;
+  if(name)  name.textContent = product.name;
+  if(price) price.textContent = product.price;
+  if(desc)  desc.textContent = product.desc;
+
+  if(stock){
+    stock.innerHTML =
+      product.stock > 0
+        ? "✔ En stock"
+        : "❌ نفد من المخزن";
+  }
+}
+
+// ================== ORDER VIA WHATSAPP ==================
+function submitOrder(){
+  const name  = document.getElementById("orderName").value;
+  const phone = document.getElementById("orderPhone").value;
+  const place = document.getElementById("orderLocation").value;
+
+  if(!name || !phone || !place){
+    alert("⚠️ عمّر المعلومات الكل");
+    return;
+  }
+
+  let message = `🛒 طلب جديد من Vibe Market\n\n`;
+  let total = 0;
+
+  cart.forEach(item=>{
+    message += `• ${item.name} - ${item.price} DT\n`;
+    total += item.price;
+  });
+
+  message += `\n💰 المجموع: ${total} DT`;
+  message += `\n👤 الحريف: ${name}`;
+  message += `\n📞 الهاتف: ${phone}`;
+  message += `\n📍 العنوان: ${place}`;
+
+  window.open(
+    "https://wa.me/21620646120?text=" + encodeURIComponent(message),
+    "_blank"
+  );
+
+  cart = [];
+  localStorage.removeItem("cart");
+}
+
+
+// ================== TABS ==================
+function openTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+
+  event.target.classList.add("active");
+  document.getElementById(id).classList.add("active");
+}
+
+// ================== MODAL ==================
+function openOrderModal(){
+  document.getElementById("orderModal").style.display = "flex";
+}
+
+function closeOrderModal(){
+  document.getElementById("orderModal").style.display = "none";
+}
+
+// ================== INIT ==================
+window.onload = loadProduct;
+// ===== CART =====
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function addToCart(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const product = products[id];
+
+  if(!product || product.stock <= 0){
+    alert("❌ المنتج غير متوفر");
+    return;
+  }
+
+  cart.push({
+    id,
+    name: product.name,
+    price: product.price
+  });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  animateCart();
+}
+function animateCart(){
+  const cartBtn = document.querySelector(".cart-btn");
+  if(!cartBtn) return;
+
+  cartBtn.classList.add("animate");
+  setTimeout(()=>cartBtn.classList.remove("animate"),400);
+}
+script js 
+// ================== PRODUCTS (واحد برك) ==================
+const products = {
+  led: {
+    name: "LED RGB متعدد الألوان",
+    price: 25,
+    desc: "أضواء LED RGB متميزة لتزيين الغرف مع جهاز تحكم.",
+    img: "images/led.jpg",
+    stock: 10
+  },
+  casque: {
+    name: "Casque Bluetooth CAT EAR",
+    price: 28,
+    desc: "سماعات بلوتوث عصرية مع إضاءة LED.",
+    img: "images/casce.jpg",
+    stock: 5
+  },
+  charger: {
+    name: "Haut-Parleur & Wireless Charger",
+    price: 45,
+    desc: "مكبر صوت بلوتوث مع شاحن لاسلكي سريع.",
+    img: "images/charg wyrls.jpg",
+    stock: 7
+  }
+};
+
+// ================== CART ==================
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function saveCart(){
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function updateCartUI(){
+  const cartCount = document.getElementById("cartCount");
+  const cartItems = document.getElementById("cartItems");
+  const cartTotal = document.getElementById("cartTotal");
+
+  if(cartCount) cartCount.textContent = cart.length;
+
+  if(cartItems && cartTotal){
+    cartItems.innerHTML = "";
+    let total = 0;
+
+    if(cart.length === 0){
+      cartItems.innerHTML = "<li>🛒 السلة فارغة</li>";
+    }
+
+    cart.forEach((item,i)=>{
+      total += item.price;
+      cartItems.innerHTML += `
+        <li>
+          ${item.name} - ${item.price} DT
+          <span onclick="removeFromCart(${i})" style="color:red;cursor:pointer">❌</span>
+        </li>`;
+    });
+
+    cartTotal.textContent = total + " DT";
+  }
+}
+
+function addToCart(id){
+  const product = products[id];
+  if(!product || product.stock <= 0){
+    alert("❌ المنتج غير متوفر");
+    return;
+  }
+
+  cart.push({ name: product.name, price: product.price });
+  product.stock--;
+  saveCart();
+  updateCartUI();
+}
+
+function removeFromCart(i){
+  cart.splice(i,1);
+  saveCart();
+  updateCartUI();
+}
+
+// ================== PRODUCT PAGE ==================
+function loadProduct(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const product = products[id];
+  if(!product) return;
+
+  const img = document.getElementById("mainImage");
+  const name = document.getElementById("pName");
+  const price = document.getElementById("pPrice");
+  const desc = document.getElementById("pDesc");
+  const stock = document.getElementById("pStock");
+
+  if(img) img.src = product.img;
+  if(name) name.textContent = product.name;
+  if(price) price.textContent = product.price;
+  if(desc) desc.textContent = product.desc;
+  if(stock){
+    stock.innerHTML = product.stock > 0
+      ? "✔ En stock"
+      : "❌ نفد من المخزن";
+  }
+}
+
+// ================== WHATSAPP ORDER ==================
+function submitOrder(){
+  const client = document.getElementById("orderName").value;
+  const phone = document.getElementById("orderPhone").value;
+  const product = document.getElementById("pName").textContent;
+  const price = document.getElementById("pPrice").textContent;
+
+  if(!client || !phone){
+    alert("⚠️ عمّر المعلومات");
+    return;
+  }
+
+  const msg = `طلب جديد من Vibe Market
+المنتج: ${product}
+السعر: ${price} DT
+الحريف: ${client}
+الهاتف: ${phone}`;
+
+  window.open(
+    "https://wa.me/21620646120?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+// ================== MODALS ==================
+function openCart(){ document.getElementById("cartModal").style.display="flex"; }
+function closeCart(){ document.getElementById("cartModal").style.display="none"; }
+function openOrderModal(){ document.getElementById("orderModal").style.display="flex"; }
+function closeOrderModal(){ document.getElementById("orderModal").style.display="none"; }
+
+// ================== NAV ==================
+function toggleMenu(){
+  document.querySelector(".nav").classList.toggle("active");
+}
+
+// ================== INIT ==================
+window.onload = function(){
+  updateCartUI();
+  if(window.location.pathname.includes("product.html")){
+    loadProduct();
+  }
+};
+function goProduct(id){
+  window.location.href = "product.html?id=" + id;
+}
+style css
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ================= BODY ================= */
+body {
+  background: linear-gradient(180deg, #0e0e0e, #1a1a1a);
+  color: #f1f1f1;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 30px;
+  position: sticky;
+  top: 0;
+  background: #0b0b0b;
+  border-bottom: 1px solid #222;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.logo span { color: #7c7cff; }
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-link {
+  color: #ddd;
+  text-decoration: none;
+  font-size: 16px;
+  position: relative;
+  transition: 0.3s;
+}
+.nav-link:hover { color: #7c7cff; }
+
+[dir="rtl"] .nav-link::after {
+  right: 0;
+}
+[dir="ltr"] .nav-link::after {
+  left: 0;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: #7c7cff;
+  transition: 0.3s;
+}
+.nav-link:hover::after { width: 100%; }
+
+.lang-btn {
+  background: transparent;
+  color: #7c7cff;
+  border: 1.5px solid #7c7cff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.lang-btn:hover {
+  background: #7c7cff;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(124,124,255,.4);
+}
+
+/* ================= HAMBURGER ================= */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+/* ================= HERO ================= */
+.hero {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #121212, #1a1a1a);
+  color: #fff;
+}
+
+.hero h2 {
+  font-size: 38px;
+  margin-bottom: 12px;
+  text-shadow: 0 4px 10px rgba(124,124,255,.6);
+}
+
+.hero p {
+  color: #aaa;
+  font-size: 18px;
+}
+
+/* ================= PRODUCTS ================= */
+.products {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.products h3 {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.product-card {
+  background: linear-gradient(145deg,#1b1b1b,#242424);
+  border-radius: 22px;
+  padding: 20px;
+  cursor: pointer;
+  transition: .3s;
+  box-shadow: 0 6px 20px rgba(0,0,0,.6);
+}
+.product-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(124,124,255,.5);
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 14px;
+  margin-bottom: 15px;
+}
+
+.price {
+  color: #7c7cff;
+  font-weight: bold;
+}
+
+/* ================= BUTTONS ================= */
+.btn {
+  background: linear-gradient(45deg, #7c7cff, #9b6cff);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: .3s;
+}
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(124,124,255,.7);
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid #a855f7;
+}
+.btn.outline:hover {
+  background: #a855f7;
+}
+
+/* ================= CART BUTTON ================= */
+.cart-btn {
+  position: fixed;
+  bottom: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 26px;
+  background: linear-gradient(45deg,#7c7cff,#9b6cff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+[dir="rtl"] .cart-btn { right: 20px; }
+[dir="ltr"] .cart-btn { left: 20px; }
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d4d;
+  color: #fff;
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================= MODAL ================= */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 25px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* ================= PRODUCT PAGE ================= */
+.product-page {
+  padding: 60px 20px;
+}
+
+.product-wrapper {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  background: linear-gradient(180deg,#0f0f18,#0b0b0f);
+  padding: 30px;
+  border-radius: 25px;
+}
+
+.product-images {
+  display: flex;
+  justify-content: center;
+}
+
+.main-img {
+  max-height: 420px;
+  object-fit: contain;
+  transition: .3s;
+}
+.main-img:hover { transform: scale(1.04); }
+
+.product-info h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.rating {
+  color: #facc15;
+  margin-bottom: 10px;
+}
+
+.stock {
+  color: #22c55e;
+  margin-bottom: 10px;
+}
+
+.desc {
+  color: #ccc;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+/* ================= TABS ================= */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tab {
+  background: #1a1a25;
+  border: none;
+  color: #ccc;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.tab.active {
+  background: #a855f7;
+  color: #fff;
+}
+
+.tab-content {
+  background: #14141f;
+  padding: 15px;
+  border-radius: 15px;
+  color: #ccc;
+}
+
+/* ================= CONTACT ================= */
+.contact {
+  padding: 40px 20px;
+  text-align: center;
+  background: #121212;
+}
+
+.contact-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn.whatsapp { background: #25D366; }
+.btn.instagram { background: #e1306c; }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+
+  .nav {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: #0b0b0b;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 16px;
+    display: none;
+  }
+  .nav.active { display: flex; }
+
+  .product-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+.product-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.product-card * {
+  pointer-events: none;
+}
+/* ===== PRODUCT PAGE ===== */
+
+.product-page {
+  padding: 80px 6%;
+  background: #050505;
+  color: #fff;
+}
+
+.product-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Images */
+.product-images {
+  background: linear-gradient(145deg, #0b0b0b, #141414);
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+}
+
+.main-img {
+  width: 100%;
+  border-radius: 22px;
+  transition: transform .4s ease;
+}
+
+.main-img:hover {
+  transform: scale(1.04);
+}
+
+/* Info */
+.product-info h1 {
+  font-size: 38px;
+  margin-bottom: 10px;
+}
+
+.rating {
+  color: #ffcc00;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.rating span {
+  color: #aaa;
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.price {
+  font-size: 32px;
+  font-weight: bold;
+  color: #7c7cff;
+  margin: 10px 0;
+}
+
+.stock {
+  color: #3cff87;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.desc {
+  color: #ccc;
+  line-height: 1.7;
+  margin-bottom: 30px;
+  max-width: 500px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 26px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: .3s ease;
+  text-decoration: none;
+}
+
+.add-cart {
+  background: linear-gradient(135deg, #6c63ff, #9d8cff);
+  color: #fff;
+}
+
+.add-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(108,99,255,0.5);
+}
+
+.whatsapp {
+  background: #25d366;
+  color: #000;
+}
+
+.whatsapp:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 900px) {
+  .product-wrapper {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .desc {
+    margin: auto;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+}
+/* ===== PRODUCT PAGE ===== */
+
+.product-page{
+  min-height:100vh;
+  background:#050505;
+  padding:80px 6%;
+}
+
+.product-wrapper{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+
+/* IMAGE */
+.product-images{
+  background:linear-gradient(145deg,#0b0b0b,#141414);
+  border-radius:30px;
+  padding:40px;
+  box-shadow:0 30px 70px rgba(0,0,0,.7);
+}
+
+.main-img{
+  width:100%;
+  height:420px;
+  object-fit:contain;
+  border-radius:24px;
+  display:block;
+}
+
+/* INFO */
+.product-info h1{
+  font-size:38px;
+  color:white;
+}
+
+.price{
+  font-size:30px;
+  color:#7c7cff;
+}
+
+#pDesc{
+  color:#ccc;
+  max-width:500px;
+  line-height:1.7;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  .product-wrapper{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+}
+
+/* Thumbs */
+.thumbs {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.thumbs img {
+  width: 70px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: .6;
+  transition: .3s;
+}
+
+.thumbs img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Info */
+.product-info h1 {
+  font-size: 38px;
+}
+
+.rating {
+  color: gold;
+  margin: 10px 0;
+}
+
+.price {
+  font-size: 30px;
+  color: #7c7cff;
+}
+
+.stock {
+  color: #3cff87;
+  margin-bottom: 20px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 25px 0;
+}
+
+.tab {
+  padding: 10px 20px;
+  border-radius: 20px;
+  background: #111;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #6c63ff;
+  color: #fff;
+}
+
+.tab-content {
+  display: none;
+  color: #ccc;
+  line-height: 1.7;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.add-cart {
+  background: linear-gradient(135deg,#6c63ff,#9d8cff);
+  color: white;
+}
+
+.whatsapp {
+  background: #25d366;
+  color: black;
+}
+
+/* Related */
+.related {
+  padding: 60px 6%;
+  background: #070707;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 40px;
+  background: #111;
+  border-radius: 22px;
+  text-align: center;
+  transition: .3s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.6);
+}
+
+/* Mobile */
+@media(max-width:900px){
+  .product-wrapper{grid-template-columns:1fr;text-align:center}
+  .actions{justify-content:center}
+}
+/* ===== FIX GENERAL LAYOUT ===== */
+body {
+  overflow-x: hidden;
+}
+
+.product-wrapper {
+  background: linear-gradient(180deg,#0f0f18,#0b0b0f);
+  border-radius: 25px;
+  padding: 40px;
+}
+
+/* image */
+.product-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-img {
+  max-height: 420px;
+  width: 100%;
+  object-fit: contain;
+}
+/* ===== ORDER FORM FIX ===== */
+#orderModal .modal-content {
+  text-align: right;
+}
+
+#orderModal input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+}
+
+#orderModal input::placeholder {
+  color: #888;
+}
+
+#orderModal input:focus {
+  outline: none;
+  border-color: #7c7cff;
+  box-shadow: 0 0 8px rgba(124,124,255,.4);
+}
+#orderModal .btn {
+  font-size: 15px;
+  font-weight: 600;
+}
+/* ===== CART ANIMATION ===== */
+.cart-btn.animate {
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@media (max-width: 768px) {
+  .product-wrapper {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 25px;
+  }
+
+  .main-img {
+    max-height: 300px;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+
+  #orderModal .modal-content {
+    width: 95%;
+  }
+}
+

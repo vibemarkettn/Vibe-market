@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Product | Vibe Market</title>
+  <link rel="stylesheet" href="product.css">
+</head>
+<body>
+
+<div class="header">
+  <h2 class="logo">VIBE <span>MARKET</span></h2>
+</div>
+
+<div class="cart-btn" onclick="toggleCart()">
+  🛒 <span id="cartCount">0</span>
+</div>
+
+<div id="cartModal" class="cart-modal">
+  <div class="cart-box">
+    <div class="cart-header">
+      <h3>🛒 سلة التسوق</h3>
+      <span class="close-cart" onclick="toggleCart()">✖</span>
+    </div>
+    <ul id="cartItems"></ul>
+    <p class="total">المجموع: <span id="cartTotal">0</span> DT</p>
+    <button class="checkout-btn">الشراء الآن</button>
+  </div>
+</div>
+
+<div id="checkoutModal" class="checkout-modal">
+  <div class="checkout-box">
+    <h3>📝 معلومات الشراء</h3>
+    <span class="close-checkout" onclick="toggleCheckout()">✖</span>
+<form id="checkoutForm">
+  <input id="cFirstName" name="firstName" placeholder="الاسم" required>
+  <input id="cLastName" name="lastName" placeholder="اللقب" required>
+  <input id="cPhone" name="phone" placeholder="رقم الهاتف" required>
+  <input id="cEmail" name="email" placeholder="البريد الإلكتروني" required>
+  <input id="cCountry" name="city" placeholder="المدينة / الدولة" required>
+  <button type="submit" class="checkout-btn">تأكيد الشراء</button>
+</form>
+
+
+  </div>
+</div>
+
+<div class="product-page">
+  <div class="product-card full product-layout">
+    <div class="product-image">
+      <img id="mainImage">
+    </div>
+    <div class="product-info">
+      <h1 id="pName"></h1>
+      <p class="price"><span id="pPrice"></span> DT</p>
+      <p id="pDesc" class="desc"></p>
+      <p id="pStock" class="stock"></p>
+      <div class="quantity-box">
+        <button onclick="changeQty(-1)">➖</button>
+        <span id="qty">1</span>
+        <button onclick="changeQty(1)">➕</button>
+      </div>
+      <button class="add-btn" onclick="addToCartQty()">🛒 إضافة للسلة</button>
+      <button class="back-btn" onclick="goHome()">🏠 العودة</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="script.js"></script>
+</body>
+</html>

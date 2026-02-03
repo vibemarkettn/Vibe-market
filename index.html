@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <h2 class="logo">VIBE <span>MARKET</span></h2>
+  <nav class="nav">
+    <a href="index.html" class="nav-link">الرئيسية</a>
+    <a href="#products" class="nav-link">المنتجات</a>
+    <a href="#contact" class="nav-link">تواصل معنا</a>
+    <button class="lang-btn" onclick="toggleLang()">EN</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>طوّر الـ VIBE متاعك</h2>
+
+  <!-- LOGO -->
+  <div class="hero-logo">
+    <img src="images/logo.jpg" alt="Vibe Market Logo">
+  </div>
+
+  <p>إلكترونيات • LED • Accessories</p>
+</section>
+
+
+<section id="products">
+  <h3>منتجاتنا</h3>
+
+  <div class="products-grid" id="productsContainer">
+
+    <!-- منتجات ثابتة -->
+    <div class="product-card" onclick="goProduct('led')">
+      <img src="images/ledd.jpg">
+      <h4>LED RGB متعدد الألوان</h4>
+      <p class="price">25 DT</p>
+    </div>
+
+    <div class="product-card" onclick="goProduct('casque')">
+      <img src="images/casque.jpg">
+      <h4>Casque Bluetooth CAT EAR</h4>
+      <p class="price">25 DT</p>
+    </div>
+
+    <div class="product-card" onclick="goProduct('mouse')">
+      <img src="images/mouse.jpg">
+      <h4> Elite RGB Wireless Mouse</h4>
+      <p class="price">30 DT</p>
+    </div>
+      <div class="product-card" onclick="goProduct('projector')">
+      <img src="images/star.jpg">
+      <h4>LED star projector with Bluetooth</h4>
+      <p class="price">25 DT</p>
+    </div>
+</section>
+
+
+<section class="contact-vibe" id="contact">
+  <h2>تواصل معنا</h2>
+  <div class="vibe-icons">
+    <a href="https://wa.me/216" target="_blank" class="vibe-btn whatsapp">
+      <span>WhatsApp</span>
+    </a>
+    <a href="https://www.instagram.com/vibe.market2?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="vibe-btn instagram">
+      <span>Instagram</span>
+    </a>
+  </div>
+</section>
+
+<div class="cart-btn" onclick="toggleCart()">
+  🛒 <span id="cartCount">0</span>
+</div>
+
+<div id="cartModal" class="cart-modal">
+  <div class="cart-box">
+    <div class="cart-header">
+      <h3>🛒 سلة التسوق</h3>
+      <span class="close-cart" onclick="toggleCart()">✖</span>
+    </div>
+    <ul id="cartItems"></ul>
+    <p class="total">المجموع: <span id="cartTotal">0</span> DT</p>
+    <button class="checkout-btn">الشراء الآن</button>
+  </div>
+</div>
+
+<div id="checkoutModal" class="checkout-modal">
+  <div class="checkout-box">
+    <h3>📝 معلومات الشراء</h3>
+    <span class="close-checkout" onclick="toggleCheckout()">✖</span>
+    <form id="checkoutForm">
+      <input id="cFirstName" name="firstName" placeholder="الاسم" required>
+      <input id="cLastName" name="lastName" placeholder="اللقب" required>
+      <input id="cPhone" name="phone" placeholder="رقم الهاتف" required>
+      <input id="cEmail" name="email" placeholder="البريد الإلكتروني" required>
+      <input id="cCountry" name="city" placeholder="المدينة / الدولة" required>
+
+      <button type="submit"  class="checkout-btn">تأكيد الشراء</button>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
