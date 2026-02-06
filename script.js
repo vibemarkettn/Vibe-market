@@ -10,7 +10,10 @@ let products = {
   mouse:{id:"mouse",name:"Elite RGB Wireless Mouse",price:30,img:"images/mouse.jpg",stock:7},
   projector:{id:"projector",name:"LED star projector with Bluetooth",price:25,img:"images/star.jpg",stock:7},
   mong:{id:"mong",name:"T800 Ultra Smart Watch — 49mm Aluminium",price:30,img:"images/mong.jpg",stock:7},
-  mic:{id:"mic",name:"Professional Studio Kit — Smartphone & Camera",price:35.900,img:"images/mic.jpg",stock:7}
+  mic:{id:"mic",name:"Professional Studio Kit — Smartphone & Camera",price:35.900,img:"images/mic.jpg",stock:7},
+  bafle:{id:"bafle",name:"HAUT PARLEUR RGB",price:75,img:"images/bafle.jpg",stock:7},
+  kit:{id:"kit",name:"AirPod A9 Pro — Wireless Earbuds with Touch Screen",price:45,img:"images/icot.jpg",stock:7},
+  cass:{id:"cass",name:"🎧 BH02 BlackWave Headset",price:34,img:"images/cass.jpg",stock:7}
 };
 
 
