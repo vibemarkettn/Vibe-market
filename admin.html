@@ -137,7 +137,10 @@
     <div id="ordersPage" class="page">
       <div class="page-header">
         <h2>Orders Management</h2>
-        <button class="btn-danger" onclick="restartOrders()">🔄 Restart Orders (Test)</button>
+        <div>
+          <button class="btn-secondary" onclick="FirestoreSync.testConnection()">🧪 Test Firestore</button>
+          <button class="btn-danger" onclick="restartOrders()">🔄 Restart Orders (Test)</button>
+        </div>
       </div>
       <div class="search-filter">
         <input type="text" id="orderSearch" placeholder="🔍 Search orders..." oninput="filterOrders()">
@@ -306,20 +309,37 @@ try {
 <script>
 // ================= FIRESTORE SYNC SERVICE =================
 // Note: db will be accessed via window.db after Firebase loads
-let db;
 
 const FirestoreSync = {
   orders: [],
+  unsubscribe: null,
   
   // Initialize and set up real-time listeners
   async init() {
     const statusEl = document.getElementById('syncStatus');
     if (statusEl) statusEl.textContent = '● Connecting...';
     
+    // Wait for Firebase to be ready
+    if (!window.db) {
+      console.log('Waiting for Firebase...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    if (!window.db) {
+      console.error('Firebase not initialized');
+      if (statusEl) {
+        statusEl.textContent = '● Error';
+        statusEl.style.color = '#ef4444';
+      }
+      return;
+    }
+    
     try {
       // Real-time listener for orders - ALL ADMINS SEE SAME DATA!
       // Using onSnapshot for real-time updates
-      window.db.collection('orders').onSnapshot(
+      console.log('Setting up Firestore listener...');
+      
+      const unsubscribe = window.db.collection('orders').onSnapshot(
         (snapshot) => {
           this.orders = [];
           snapshot.forEach(doc => {
@@ -338,7 +358,7 @@ const FirestoreSync = {
           // Trigger UI updates
           this.updateUI();
           
-          console.log('📦 Orders synced:', this.orders.length);
+          console.log('📦 Orders synced:', this.orders.length, '-', new Date().toLocaleTimeString());
         },
         (error) => {
           console.error('Firestore error:', error);
@@ -348,6 +368,36 @@ const FirestoreSync = {
           }
         }
       );
+      
+      this.unsubscribe = unsubscribe;
+      console.log('Firestore listener setup complete');
+    } catch(e) {
+      console.error('Init error:', e);
+      if (statusEl) statusEl.textContent = '● Error';
+    }
+  },
+  
+  // Test Firestore connection
+  async testConnection() {
+    try {
+      const snapshot = await window.db.collection('orders').get();
+      console.log('Firestore test - Orders count:', snapshot.size);
+      alert('Firestore connected! Total orders: ' + snapshot.size);
+    } catch(e) {
+      console.error('Firestore test failed:', e);
+      alert('Firestore connection failed: ' + e.message);
+    }
+  },
+        (error) => {
+          console.error('Firestore error:', error);
+          if (statusEl) {
+            statusEl.textContent = '● Offline';
+            statusEl.style.color = '#ef4444';
+          }
+        }
+      );
+      
+      console.log('Firestore listener setup complete');
     } catch(e) {
       console.error('Init error:', e);
       if (statusEl) statusEl.textContent = '● Error';
@@ -722,25 +772,36 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
 });
 
 function showAdminPanel() {
+  console.log('showAdminPanel called');
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminPanel").style.display = "flex";
   updateDate();
   
   // Initialize Firestore sync
   if (typeof FirestoreSync !== 'undefined') {
+    console.log('Calling FirestoreSync.init()...');
     FirestoreSync.init().then(() => {
       console.log('Admin ready with Firestore sync!');
-      document.getElementById('syncStatus').textContent = '● Live';
-      document.getElementById('syncStatus').style.color = '#10b981';
+      const statusEl = document.getElementById('syncStatus');
+      if (statusEl) {
+        statusEl.textContent = '● Live';
+        statusEl.style.color = '#10b981';
+      }
     }).catch(err => {
       console.error('Firestore init failed:', err);
-      document.getElementById('syncStatus').textContent = '● Error';
-      document.getElementById('syncStatus').style.color = '#ef4444';
+      const statusEl = document.getElementById('syncStatus');
+      if (statusEl) {
+        statusEl.textContent = '● Error';
+        statusEl.style.color = '#ef4444';
+      }
     });
   } else {
     console.error('FirestoreSync not found');
-    document.getElementById('syncStatus').textContent = '● Error';
-    document.getElementById('syncStatus').style.color = '#ef4444';
+    const statusEl = document.getElementById('syncStatus');
+    if (statusEl) {
+      statusEl.textContent = '● Error';
+      statusEl.style.color = '#ef4444';
+    }
   }
 }
 
