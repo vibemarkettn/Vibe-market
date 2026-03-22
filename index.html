@@ -173,11 +173,13 @@
     </div>
   </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+<!-- Firebase SDK - Using compat versions for browser script -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
+console.log('Firebase scripts loaded');
+
 const firebaseConfig = {
   apiKey: "AIzaSyCCLnaJMtWiU9j6P7NDFxi3LzPLicZKg",
   authDomain: "orders-system-4ac29.firebaseapp.com",

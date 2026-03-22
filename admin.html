@@ -275,26 +275,39 @@
   <span>© 2024 Vibe Market Admin</span>
 </footer>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+<!-- Firebase SDK - Using compat versions for browser script -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ================= FIREBASE FIRESTORE CONFIG =================
-const firebaseConfig = {
-  apiKey: "AIzaSyCCLnaJMtWiU9j6P7NDFxi3LzPLicZKg",
-  authDomain: "orders-system-4ac29.firebaseapp.com",
-  projectId: "orders-system-4ac29",
-  storageBucket: "orders-system-4ac29.firebasestorage.app",
-  messagingSenderId: "1032273437960",
-  appId: "1:1032273437960:web:0fd1e5ea15801bc80af8bd"
-};
+console.log('Firebase scripts loaded');
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+try {
+  // ================= FIREBASE FIRESTORE CONFIG =================
+  const firebaseConfig = {
+    apiKey: "AIzaSyCCLnaJMtWiU9j6P7NDFxi3LzPLicZKg",
+    authDomain: "orders-system-4ac29.firebaseapp.com",
+    projectId: "orders-system-4ac29",
+    storageBucket: "orders-system-4ac29.firebasestorage.app",
+    messagingSenderId: "1032273437960",
+    appId: "1:1032273437960:web:0fd1e5ea15801bc80af8bd"
+  };
 
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+  console.log('Firebase Firestore initialized successfully');
+  window.FirebaseReady = true;
+} catch(e) {
+  console.error('Firebase init error:', e);
+}
+</script>
+
+<script>
 // ================= FIRESTORE SYNC SERVICE =================
+// Note: db will be accessed via window.db after Firebase loads
+let db;
+
 const FirestoreSync = {
   orders: [],
   
@@ -306,7 +319,7 @@ const FirestoreSync = {
     try {
       // Real-time listener for orders - ALL ADMINS SEE SAME DATA!
       // Using onSnapshot for real-time updates
-      db.collection('orders').onSnapshot(
+      window.db.collection('orders').onSnapshot(
         (snapshot) => {
           this.orders = [];
           snapshot.forEach(doc => {
@@ -501,7 +514,7 @@ const FirestoreSync = {
   // Update order status in Firestore
   async updateOrderStatus(orderId, newStatus) {
     try {
-      await db.collection('orders').doc(orderId).update({
+      await window.db.collection('orders').doc(orderId).update({
         status: newStatus,
         updatedAt: Date.now()
       });
@@ -519,7 +532,7 @@ const FirestoreSync = {
     
     try {
       const batch = db.batch();
-      const snapshot = await db.collection('orders').get();
+      const snapshot = await window.db.collection('orders').get();
       snapshot.forEach(doc => batch.delete(doc.ref));
       await batch.commit();
       console.log('All orders cleared');
@@ -675,8 +688,25 @@ let admin = DEFAULT_ADMIN; // Always use default - don't load from localStorage
 
 console.log('Admin login setup, admin:', admin);
 
+// Fallback login button click handler (in case form submit doesn't work)
+document.querySelector('.login-btn').addEventListener('click', function(e) {
+  e.preventDefault();
+  console.log('Login button clicked');
+  const username = document.getElementById("adminUsername").value.trim();
+  const password = document.getElementById("adminPassword").value.trim();
+  
+  if (username === admin.username && password === admin.password) {
+    sessionStorage.setItem("adminLoggedIn", "true");
+    showAdminPanel();
+  } else {
+    alert("Invalid username or password. Use: admin / admin123");
+  }
+});
+
+// Form submit handler
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
+  console.log('Form submitted');
   const username = document.getElementById("adminUsername").value.trim();
   const password = document.getElementById("adminPassword").value.trim();
   
