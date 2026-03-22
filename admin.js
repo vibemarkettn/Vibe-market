@@ -44,6 +44,11 @@ let categories = JSON.parse(localStorage.getItem("categories")) || DEFAULT_CATEG
 
 // ================= INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
+  // Always reload data from localStorage on page load
+  orders = JSON.parse(localStorage.getItem("orders")) || [];
+  products = JSON.parse(localStorage.getItem("products")) || DEFAULT_PRODUCTS;
+  categories = JSON.parse(localStorage.getItem("categories")) || DEFAULT_CATEGORIES;
+  
   initLogin();
   initNavigation();
   initForms();
@@ -78,6 +83,11 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
 });
 
 function showAdminPanel() {
+  // Reload all data from localStorage to get latest orders
+  products = JSON.parse(localStorage.getItem("products")) || DEFAULT_PRODUCTS;
+  orders = JSON.parse(localStorage.getItem("orders")) || [];
+  categories = JSON.parse(localStorage.getItem("categories")) || DEFAULT_CATEGORIES;
+  
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminPanel").style.display = "flex";
   loadDashboard();
@@ -169,6 +179,9 @@ function refreshPreview() {
 
 // ================= DASHBOARD =================
 function loadDashboard() {
+  // Reload orders to get latest data from localStorage
+  orders = JSON.parse(localStorage.getItem("orders")) || [];
+  
   // Stats
   document.getElementById("totalProducts").innerText = Object.keys(products).length;
   document.getElementById("totalOrders").innerText = orders.length;
