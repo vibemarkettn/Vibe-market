@@ -480,7 +480,7 @@ function handleCheckout() {
 // ================= CHECKOUT =================
 const checkoutForm = document.getElementById("checkoutForm");
 if (checkoutForm) {
-  checkoutForm.addEventListener("submit", function(e) {
+  checkoutForm.addEventListener("submit", async function(e) {
     e.preventDefault();
     
     if (cart.length === 0) {
@@ -513,9 +513,29 @@ if (checkoutForm) {
       date: new Date().toISOString()
     };
     
+    // Save to localStorage for fallback
     const orders = JSON.parse(localStorage.getItem("orders")) || [];
     orders.push(order);
     localStorage.setItem("orders", JSON.stringify(orders));
+    
+    // Sync to Firebase - ALL admins will see this order instantly!
+    if (typeof OrderSync !== 'undefined') {
+      try {
+        await OrderSync.create({
+          customerName: firstName + " " + lastName,
+          phone: phone,
+          email: email,
+          city: city,
+          items: cart.map(item => ({...item})),
+          total: total,
+          status: "pending",
+          date: new Date().toISOString()
+        });
+        console.log('Order synced to Firebase!');
+      } catch(e) {
+        console.log('Firebase sync failed, using localStorage:', e);
+      }
+    }
     
     // Clear cart
     cart = [];
@@ -523,7 +543,7 @@ if (checkoutForm) {
     updateCartUI();
     checkoutForm.reset();
     toggleCheckout();
-    showToast("✅ تم إرسال الطلب بنجاح! سنقوم بتواصل معك قريباً", "success");
+    showToast("✅ Order placed successfully! We'll contact you soon.", "success");
   });
 }
 

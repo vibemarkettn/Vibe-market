@@ -173,6 +173,34 @@
     </div>
   </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCCLnaJMtWiU9j6P7NDFxi3LzPLicZKg",
+  authDomain: "orders-system-4ac29.firebaseapp.com",
+  projectId: "orders-system-4ac29",
+  storageBucket: "orders-system-4ac29.firebasestorage.app",
+  messagingSenderId: "1032273437960",
+  appId: "1:1032273437960:web:0fd1e5ea15801bc80af8bd"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const OrderSync = {
+  async create(orderData) {
+    const ordersRef = db.ref('orders');
+    const newOrderRef = ordersRef.push();
+    const order = { ...orderData, id: newOrderRef.key, createdAt: Date.now() };
+    await newOrderRef.set(order);
+    return order;
+  }
+};
+</script>
+
 <script src="script.js"></script>
 <script>
 function scrollToTop() {

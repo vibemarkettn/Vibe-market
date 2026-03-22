@@ -36,18 +36,74 @@ const CATEGORY_ICONS = ["🎧", "💡", "⌚", "📱", "💻", "🎮", "📷", "
 
 // ================= STATE MANAGEMENT =================
 let products = JSON.parse(localStorage.getItem("products")) || DEFAULT_PRODUCTS;
-let orders = JSON.parse(localStorage.getItem("orders")) || [];
-let customers = JSON.parse(localStorage.getItem("customers")) || [];
+let orders = [];
+let customers = [];
 let admin = JSON.parse(localStorage.getItem("admin")) || DEFAULT_ADMIN;
 let settings = JSON.parse(localStorage.getItem("settings")) || DEFAULT_SETTINGS;
 let categories = JSON.parse(localStorage.getItem("categories")) || DEFAULT_CATEGORIES;
 
+// ================= FIREBASE REAL-TIME SYNC =================
+function initFirebaseSync() {
+  // Subscribe to orders - real-time sync
+  if (typeof OrderSync !== 'undefined') {
+    OrderSync.subscribe((firebaseOrders) => {
+      console.log('Orders synced:', firebaseOrders.length);
+      orders = firebaseOrders;
+      
+      // Update all UI components that show orders
+      if (document.getElementById("totalOrders")) {
+        document.getElementById("totalOrders").innerText = orders.length;
+      }
+      if (document.getElementById("recentOrders")) {
+        const recent = orders.slice(0, 5);
+        document.getElementById("recentOrders").innerHTML = recent.map(order => `
+          <div class="order-card" style="padding: 15px; margin-bottom: 10px;">
+            <div class="order-info">
+              <h4>${order.customerName}</h4>
+              <p>${order.items.length} products - ${Number.isInteger(order.total) ? order.total : order.total.toFixed(3)} DT</p>
+            </div>
+            <span class="order-status order-${order.status}">${getStatusText(order.status)}</span>
+          </div>
+        `).join("");
+      }
+      
+      // Update pending orders badge
+      const pendingOrders = orders.filter(o => o.status === "pending").length;
+      if (document.getElementById("ordersBadge")) {
+        document.getElementById("ordersBadge").innerText = pendingOrders;
+      }
+      
+      // Update customers count
+      const uniqueCustomers = [...new Set(orders.map(o => o.phone))].length;
+      if (document.getElementById("totalCustomers")) {
+        document.getElementById("totalCustomers").innerText = uniqueCustomers;
+      }
+      
+      // Update revenue
+      const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+      if (document.getElementById("totalRevenue")) {
+        document.getElementById("totalRevenue").innerText = Number.isInteger(totalRevenue) ? totalRevenue : totalRevenue.toFixed(3);
+      }
+    });
+  }
+  
+  // Subscribe to products sync
+  if (typeof ProductSync !== 'undefined') {
+    ProductSync.subscribe((firebaseProducts) => {
+      products = firebaseProducts;
+      if (document.getElementById("totalProducts")) {
+        document.getElementById("totalProducts").innerText = Object.keys(products).length;
+      }
+    });
+  }
+}
+
 // ================= INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
-  // Always reload data from localStorage on page load
-  orders = JSON.parse(localStorage.getItem("orders")) || [];
-  products = JSON.parse(localStorage.getItem("products")) || DEFAULT_PRODUCTS;
-  categories = JSON.parse(localStorage.getItem("categories")) || DEFAULT_CATEGORIES;
+  // Wait for Firebase to be ready
+  setTimeout(() => {
+    initFirebaseSync();
+  }, 500);
   
   initLogin();
   initNavigation();
@@ -564,7 +620,12 @@ function updateOrderStatus(orderId, newStatus) {
   if (order) {
     order.status = newStatus;
     order.lastUpdated = new Date().toISOString();
-    localStorage.setItem("orders", JSON.stringify(orders));
+    
+    // Sync to Firebase - ALL admins will see this update instantly!
+    if (typeof OrderSync !== 'undefined') {
+      OrderSync.update(orderId, { status: newStatus, lastUpdated: order.lastUpdated });
+    }
+    
     loadDashboard();
   }
 }
