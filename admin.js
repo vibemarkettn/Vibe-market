@@ -106,6 +106,9 @@ function initNavigation() {
 }
 
 function showPage(pageName) {
+  // Reload orders from localStorage to get latest data
+  orders = JSON.parse(localStorage.getItem("orders")) || [];
+  
   // Update nav
   document.querySelectorAll(".nav-item").forEach(item => {
     item.classList.remove("active");
