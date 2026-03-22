@@ -1,53 +1,77 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Product | Vibe Market</title>
+  <meta name="description" content="Vibe Market - اكتشف أفضل المنتجات الإلكترونية والإكسسوارات">
+  <link rel="icon" href="images/logo.jpg">
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="product.css">
 </head>
 <body>
 
-<div class="header">
-  <h2 class="logo">VIBE <span>MARKET</span></h2>
-</div>
+<header class="navbar">
+  <a href="index.html" class="logo-link">
+    <img src="images/logo.jpg" alt="Vibe Market" class="navbar-logo">
+  </a>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <nav class="nav">
+    <a href="index.html" class="nav-link" data-ar="الرئيسية" data-en="Home">Home</a>
+    <a href="index.html#products" class="nav-link" data-ar="المنتجات" data-en="Products">Products</a>
+    <a href="index.html#contact" class="nav-link" data-ar="تواصل معنا" data-en="Contact">Contact</a>
+    <button class="lang-btn" onclick="toggleLang()">AR</button>
+  </nav>
+</header>
 
-<div class="cart-btn" onclick="toggleCart()">
+  <div class="cart-btn" onclick="toggleCart()">
   🛒 <span id="cartCount">0</span>
 </div>
+
+<div class="music-player">
+  <button id="musicToggle">🔇</button>
+</div>
+
+<button class="scroll-top" onclick="scrollToTop()">↑</button>
+
+<audio id="bgMusic" loop muted autoplay>
+  <source src="audio/vibe.mp3" type="audio/mpeg">
+</audio>
 
 <div id="cartModal" class="cart-modal">
   <div class="cart-box">
     <div class="cart-header">
-      <h3>🛒 سلة التسوق</h3>
+      <h3>🛒 Shopping Cart</h3>
       <span class="close-cart" onclick="toggleCart()">✖</span>
     </div>
     <ul id="cartItems"></ul>
-    <p class="total">المجموع: <span id="cartTotal">0</span> DT</p>
-    <button class="checkout-btn">الشراء الآن</button>
+    <p class="total">Total: <span id="cartTotal">0</span> DT</p>
+    <button class="clear-cart-btn" onclick="clearCart()" style="background: #ff4757; color: white; margin-bottom: 10px;">🗑️ Empty Cart</button>
+    <button class="checkout-btn" onclick="handleCheckout()">Checkout</button>
   </div>
 </div>
 
 <div id="checkoutModal" class="checkout-modal">
   <div class="checkout-box">
-    <h3>📝 معلومات الشراء</h3>
+    <h3>📝 Checkout</h3>
     <span class="close-checkout" onclick="toggleCheckout()">✖</span>
 <form id="checkoutForm">
-  <input id="cFirstName" name="firstName" placeholder="الاسم" required>
-  <input id="cLastName" name="lastName" placeholder="اللقب" required>
-  <input id="cPhone" name="phone" placeholder="رقم الهاتف" required>
-  <input id="cEmail" name="email" placeholder="البريد الإلكتروني" required>
-  <input id="cCountry" name="city" placeholder="المدينة / الدولة" required>
-  <button type="submit" class="checkout-btn">تأكيد الشراء</button>
+  <input id="cFirstName" name="firstName" placeholder="First Name" required>
+  <input id="cLastName" name="lastName" placeholder="Last Name" required>
+  <input id="cPhone" name="phone" placeholder="Phone Number" required>
+  <input id="cEmail" name="email" placeholder="Email" required>
+  <input id="cCountry" name="city" placeholder="City / Country" required>
+  <button type="submit" class="checkout-btn">Confirm Purchase</button>
 </form>
-
-
   </div>
 </div>
 
-<div class="product-page">
-  <div class="product-card full product-layout">
+<section class="product-page">
+  <div class="product-layout">
     <div class="product-image">
       <img id="mainImage">
     </div>
@@ -56,6 +80,10 @@
       <p class="price"><span id="pPrice"></span> DT</p>
       <p id="pDesc" class="desc"></p>
       <p id="pStock" class="stock"></p>
+      <div class="product-specs" id="pSpecsContainer" style="display:none;">
+        <h4>المواصفات:</h4>
+        <ul id="pSpecs"></ul>
+      </div>
       <div class="quantity-box">
         <button onclick="changeQty(-1)">➖</button>
         <span id="qty">1</span>
@@ -65,10 +93,65 @@
       <button class="back-btn" onclick="goHome()">🏠 العودة</button>
     </div>
   </div>
-</div>
+</section>
 
+<section class="contact-vibe" id="contact">
+  <h2>تواصل معنا</h2>
+  <div class="vibe-icons">
+    <a href="https://wa.me/21623409356" target="_blank" class="vibe-btn whatsapp">
+      <span>WhatsApp</span>
+    </a>
+    <a href="https://www.instagram.com/vibe.market2?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="vibe-btn instagram">
+      <span>Instagram</span>
+    </a>
+  </div>
+</section>
 
+<footer class="site-footer">
+  <p>© 2024 Vibe Market. جميع الحقوق محفوظة.</p>
+  <a href="admin.html">لوحة التحكم</a>
+</footer>
 
 <script src="script.js"></script>
+<script>
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', () => {
+  const scrollBtn = document.querySelector('.scroll-top');
+  if (scrollBtn) {
+    if (window.scrollY > 300) {
+      scrollBtn.classList.add('visible');
+    } else {
+      scrollBtn.classList.remove('visible');
+    }
+  }
+});
+
+function handleCheckout() {
+  if(cart.length === 0){
+    showToast("السلة فارغة", "error");
+    return;
+  }
+  toggleCheckout();
+}
+
+function loadProduct(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(!products[id])return;
+  const p=products[id];
+  mainImage.src=p.img;
+  pName.textContent=p.name;
+  pPrice.textContent=p.price;
+  pDesc.textContent=p.desc || p.name;
+  pStock.textContent=p.stock>0?"✔ متوفر":"❌ نفد";
+  
+  if(p.specs && p.specs.length > 0){
+    document.getElementById('pSpecsContainer').style.display = 'block';
+    document.getElementById('pSpecs').innerHTML = p.specs.map(s => `<li>${s}</li>`).join('');
+  }
+}
+</script>
 </body>
 </html>

@@ -1,146 +1,208 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vibe Market</title>
+  <title>Vibe Market - Best Electronics & Accessories</title>
+  <meta name="description" content="Vibe Market - Your trusted online store for electronics, LED lighting, and accessories in Tunisia. Fast delivery across Tunisia.">
+  <meta name="keywords" content="electronics, LED, accessories, headphones, smart watch, Tunisia, online shop">
+  <meta name="author" content="Vibe Market">
+  <meta property="og:title" content="Vibe Market">
+  <meta property="og:description" content="Upgrade Your VIBE - Best Electronics & Accessories">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/logo.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="index.html">
+  <link rel="icon" href="images/logo.jpg" type="image/jpeg">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="navbar">
-  <h2 class="logo">VIBE <span>MARKET</span></h2>
-  <nav class="nav">
-    <a href="index.html" class="nav-link">الرئيسية</a>
-    <a href="#products" class="nav-link">المنتجات</a>
-    <a href="#contact" class="nav-link">تواصل معنا</a>
-    <button class="lang-btn" onclick="toggleLang()">EN</button>
+  <a href="index.html" class="logo-link">
+    <img src="images/logo.jpg" alt="Vibe Market" class="navbar-logo">
+  </a>
+  <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+<nav class="nav">
+    <a href="index.html" class="nav-link" data-ar="الرئيسية" data-en="Home">Home</a>
+    <a href="#products" class="nav-link" data-ar="المنتجات" data-en="Products">Products</a>
+    <a href="#track" class="nav-link" data-ar="تتبع طلبك" data-en="Track Order">Track Order</a>
+    <a href="#faq" class="nav-link" data-ar="الأسئلة الشائعة" data-en="FAQ">FAQ</a>
+    <a href="#contact" class="nav-link" data-ar="تواصل معنا" data-en="Contact">Contact</a>
+    <div id="userLinkContainer"></div>
+    <button class="lang-btn" onclick="toggleLang()">AR</button>
   </nav>
 </header>
 
 <section class="hero">
-  <h2>طوّر الـ VIBE متاعك</h2>
+  <h2 data-ar="طوّر الـ VIBE متاعك" data-en="Upgrade Your VIBE">طوّر الـ VIBE متاعك</h2>
 
-  <!-- LOGO -->
   <div class="hero-logo">
     <img src="images/logo.jpg" alt="Vibe Market Logo">
   </div>
 
-  <p>إلكترونيات • LED • Accessories</p>
+  <p data-ar="إلكترونيات • LED • Accessories" data-en="Electronics • LED • Accessories">إلكترونيات • LED • Accessories</p>
 </section>
 
-<!-- Music Player -->
 <div class="music-player">
   <button id="musicToggle">🔇</button>
 </div>
+
+<button class="scroll-top" onclick="scrollToTop()">↑</button>
 
 <audio id="bgMusic" loop muted autoplay>
   <source src="audio/vibe.mp3" type="audio/mpeg">
 </audio>
 
-
-
-
 <section id="products">
-  <h3>منتجاتنا</h3>
+  <h3 data-ar="منتجاتنا" data-en="Our Products">منتجاتنا</h3>
+
+<div class="search-box">
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search for a product..." data-ar="🔍 ابحث عن منتج..." data-en="🔍 Search for a product...">
+    <button class="search-btn" onclick="clearSearch()">✕</button>
+  </div>
+
+  <div class="categories-wrapper" id="categoryContainer">
+  </div>
 
   <div class="products-grid" id="productsContainer">
+  </div>
+</section>
 
-    <!-- منتجات ثابتة -->
-    <div class="product-card" onclick="goProduct('led')">
-      <img src="images/ledd.jpg">
-      <h4>LED RGB متعدد الألوان</h4>
-      <p class="price">25 DT</p>
+<section class="faq-section" id="faq">
+  <h2 data-ar="الأسئلة الشائعة" data-en="FAQ">الأسئلة الشائعة</h2>
+  <div class="faq-container">
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>كيف يمكنني طلب منتج؟</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        أضف المنتج للسلة ثم填写 المعلومات الخاصة بك واتبع خطوات الطلب. سنتواصل معك لتأكيد الطلب.
+      </div>
     </div>
-
-    <div class="product-card" onclick="goProduct('casque')">
-      <img src="images/casque.jpg">
-      <h4>Casque Bluetooth CAT EAR</h4>
-      <p class="price">25 DT</p>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>ما هي طرق الدفع المتاحة؟</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        نحن نقبل الدفع عند الاستلام لجميع أنحاء تونس. يمكنك الدفع نقدًا عند استلام المنتج.
+      </div>
     </div>
-
-    <div class="product-card" onclick="goProduct('mouse')">
-      <img src="images/mouse.jpg">
-      <h4> Elite RGB Wireless Mouse</h4>
-      <p class="price">30 DT</p>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>كم تستغرق مدة التوصيل؟</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        مدة التوصيل تتراوح بين 2-5 أيام عمل لجميع المدن التونسية حسب الموقع.
+      </div>
     </div>
-    <div class="product-card" onclick="goProduct('projector')">
-      <img src="images/star.jpg">
-      <h4>LED star projector with Bluetooth</h4>
-      <p class="price">25 DT</p>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل المنتجات عليها ضمان؟</span>
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        نعم، جميع منتجاتنا عليها ضمان لمدة 6 أشهر ضد عيوب التصنيع.
+      </div>
     </div>
-    <div class="product-card" onclick="goProduct('mong')">
-      <img src="images/mong.jpg">
-      <h4>T800 Ultra Smart Watch — 49mm Aluminium</h4>
-      <p class="price">30 DT</p>
-    </div>
-    <div class="product-card" onclick="goProduct('mic')">
-      <img src="images/mic.jpg">
-      <h4>Professional Studio Kit — Smartphone & Camera</h4>
-      <p class="price">35.900 DT</p>
-    </div>
-        <div class="product-card" onclick="goProduct('bafle')">
-      <img src="images/bafle.jpg">
-      <h4>HAUT PARLEUR RGB</h4>
-      <p class="price">75 DT</p>
-    </div>
-        <div class="product-card" onclick="goProduct('kit')">
-      <img src="images/icot.jpg">
-      <h4>AirPod A9 Pro — Wireless Earbuds with Touch Screen</h4>
-      <p class="price">45 DT</p>
-    </div>
-        <div class="product-card" onclick="goProduct('cass')">
-      <img src="images/cass.jpg">
-      <h4>🎧 BH02 BlackWave Headset</h4>
-      <p class="price">34 DT</p>
-    </div>
+  </div>
 </section>
 
 <section class="contact-vibe" id="contact">
-  <h2>تواصل معنا</h2>
+  <h2 data-ar="تواصل معنا" data-en="Contact Us">Contact Us</h2>
   <div class="vibe-icons">
     <a href="https://wa.me/21623409356" target="_blank" class="vibe-btn whatsapp">
-      <span>WhatsApp</span>
+      <span data-ar="WhatsApp" data-en="WhatsApp">WhatsApp</span>
     </a>
     <a href="https://www.instagram.com/vibe.market2?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="vibe-btn instagram">
-      <span>Instagram</span>
+      <span data-ar="Instagram" data-en="Instagram">Instagram</span>
     </a>
   </div>
 </section>
 
-<div class="cart-btn" onclick="toggleCart()">
-  🛒 <span id="cartCount">0</span>
-</div>
+<section class="order-tracking" id="track">
+  <h2 data-ar="تتبع طلبك" data-en="Track Your Order">Track Your Order</h2>
+  <div class="tracking-form">
+    <input type="text" id="trackPhone" placeholder="Enter your phone number" required>
+    <button onclick="trackOrder()">🔍 Track</button>
+  </div>
+  <div id="trackingResult"></div>
+</section>
 
-<div id="cartModal" class="cart-modal">
-  <div class="cart-box">
-    <div class="cart-header">
-      <h3>🛒 سلة التسوق</h3>
-      <span class="close-cart" onclick="toggleCart()">✖</span>
+<footer class="site-footer">
+  <p>© 2024 Vibe Market. جميع الحقوق محفوظة.</p>
+</footer>
+
+  <div class="cart-btn" onclick="toggleCart()">
+    🛒 <span id="cartCount">0</span>
+  </div>
+
+  <div id="cartModal" class="cart-modal">
+    <div class="cart-box">
+      <div class="cart-header">
+        <h3>🛒 Shopping Cart</h3>
+        <span class="close-cart" onclick="toggleCart()">✖</span>
+      </div>
+      <ul id="cartItems"></ul>
+      <p class="total">Total: <span id="cartTotal">0</span> DT</p>
+      <button class="clear-cart-btn" onclick="clearCart()" style="background: #ff4757; color: white; margin-bottom: 10px;">🗑️ Empty Cart</button>
+      <button class="checkout-btn" onclick="handleCheckout()">Checkout</button>
     </div>
-    <ul id="cartItems"></ul>
-    <p class="total">المجموع: <span id="cartTotal">0</span> DT</p>
-    <button class="checkout-btn">الشراء الآن</button>
   </div>
-</div>
 
-<div id="checkoutModal" class="checkout-modal">
-  <div class="checkout-box">
-    <h3>📝 معلومات الشراء</h3>
-    <span class="close-checkout" onclick="toggleCheckout()">✖</span>
-    <form id="checkoutForm">
-      <input id="cFirstName" name="firstName" placeholder="الاسم" required>
-      <input id="cLastName" name="lastName" placeholder="اللقب" required>
-      <input id="cPhone" name="phone" placeholder="رقم الهاتف" required>
-      <input id="cEmail" name="email" placeholder="البريد الإلكتروني" required>
-      <input id="cCountry" name="city" placeholder="المدينة / الدولة" required>
+  <div id="checkoutModal" class="checkout-modal">
+    <div class="checkout-box">
+      <h3>📝 Checkout</h3>
+      <span class="close-checkout" onclick="toggleCheckout()">✖</span>
+      <form id="checkoutForm">
+        <input id="cFirstName" name="firstName" placeholder="First Name" required>
+        <input id="cLastName" name="lastName" placeholder="Last Name" required>
+        <input id="cPhone" name="phone" placeholder="Phone Number" required>
+        <input id="cEmail" name="email" placeholder="Email" required>
+        <input id="cCountry" name="city" placeholder="City / Country" required>
 
-      <button type="submit"  class="checkout-btn">تأكيد الشراء</button>
-    </form>
+        <button type="submit" class="checkout-btn">Confirm Purchase</button>
+      </form>
+    </div>
   </div>
-</div>
 
 <script src="script.js"></script>
+<script>
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', () => {
+  const scrollBtn = document.querySelector('.scroll-top');
+  if (scrollBtn) {
+    if (window.scrollY > 300) {
+      scrollBtn.classList.add('visible');
+    } else {
+      scrollBtn.classList.remove('visible');
+    }
+  }
+});
+
+function toggleFaq(element) {
+  const faqItem = element.parentElement;
+  faqItem.classList.toggle('active');
+}
+
+function handleCheckout() {
+  if(cart.length === 0){
+    showToast("السلة فارغة", "error");
+    return;
+  }
+  toggleCheckout();
+}
+</script>
 
 </body>
 </html>
