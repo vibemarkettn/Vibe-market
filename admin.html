@@ -305,13 +305,16 @@ const FirestoreSync = {
     
     try {
       // Real-time listener for orders - ALL ADMINS SEE SAME DATA!
-      const ordersRef = db.collection('orders');
-      ordersRef.orderBy('date', 'desc').onSnapshot(
+      // Using onSnapshot for real-time updates
+      db.collection('orders').onSnapshot(
         (snapshot) => {
           this.orders = [];
           snapshot.forEach(doc => {
             this.orders.push({ id: doc.id, ...doc.data() });
           });
+          
+          // Sort by date client-side (newest first)
+          this.orders.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
           
           // Update sync status
           if (statusEl) {

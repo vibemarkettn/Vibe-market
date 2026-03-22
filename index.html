@@ -187,16 +187,35 @@ const firebaseConfig = {
   appId: "1:1032273437960:web:0fd1e5ea15801bc80af8bd"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+let db;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  console.log('Firebase Firestore initialized successfully');
+} catch(e) {
+  console.error('Firebase init error:', e);
+}
+
+window.FirestoreReady = true;
+console.log('Firestore ready');
 
 const OrderSync = {
   async create(orderData) {
-    const docRef = await db.collection('orders').add({
-      ...orderData,
-      createdAt: Date.now()
-    });
-    return { id: docRef.id, ...orderData };
+    if (!db) {
+      console.error('Firestore not initialized');
+      throw new Error('Firestore not ready');
+    }
+    try {
+      const docRef = await db.collection('orders').add({
+        ...orderData,
+        createdAt: Date.now()
+      });
+      console.log('Order created in Firestore:', docRef.id);
+      return { id: docRef.id, ...orderData };
+    } catch (e) {
+      console.error('Firestore create error:', e);
+      throw e;
+    }
   }
 };
 </script>
