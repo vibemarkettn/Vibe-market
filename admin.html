@@ -671,18 +671,23 @@ function updateDate() {
 
 // Login
 const DEFAULT_ADMIN = { username: "admin", password: "admin123" };
-let admin = JSON.parse(localStorage.getItem("admin")) || DEFAULT_ADMIN;
+let admin = DEFAULT_ADMIN; // Always use default - don't load from localStorage
+
+console.log('Admin login setup, admin:', admin);
 
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  const username = document.getElementById("adminUsername").value;
-  const password = document.getElementById("adminPassword").value;
+  const username = document.getElementById("adminUsername").value.trim();
+  const password = document.getElementById("adminPassword").value.trim();
+  
+  console.log('Login attempt:', username, password);
+  console.log('Expected:', admin.username, admin.password);
   
   if (username === admin.username && password === admin.password) {
     sessionStorage.setItem("adminLoggedIn", "true");
     showAdminPanel();
   } else {
-    alert("Invalid username or password");
+    alert("Invalid username or password. Use: admin / admin123");
   }
 });
 
@@ -690,7 +695,23 @@ function showAdminPanel() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("adminPanel").style.display = "flex";
   updateDate();
-  FirestoreSync.init().then(() => console.log('Admin ready with Firestore sync!'));
+  
+  // Initialize Firestore sync
+  if (typeof FirestoreSync !== 'undefined') {
+    FirestoreSync.init().then(() => {
+      console.log('Admin ready with Firestore sync!');
+      document.getElementById('syncStatus').textContent = '● Live';
+      document.getElementById('syncStatus').style.color = '#10b981';
+    }).catch(err => {
+      console.error('Firestore init failed:', err);
+      document.getElementById('syncStatus').textContent = '● Error';
+      document.getElementById('syncStatus').style.color = '#ef4444';
+    });
+  } else {
+    console.error('FirestoreSync not found');
+    document.getElementById('syncStatus').textContent = '● Error';
+    document.getElementById('syncStatus').style.color = '#ef4444';
+  }
 }
 
 function logout() {
