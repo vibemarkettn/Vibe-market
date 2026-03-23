@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================= USER AUTH =================
 function initUserAuth() {
   updateUserUI();
+  initUserOrdersListener();
 }
 
 function updateUserUI() {
@@ -114,6 +115,105 @@ function updateUserUI() {
       `;
     }
   }
+}
+
+// ================= USER ORDERS (Real-time) =================
+var userOrdersUnsubscribe = null;
+
+function initUserOrdersListener() {
+  // Show/hide My Orders section based on login
+  var myOrdersSection = document.getElementById('myorders');
+  var myOrdersLink = document.getElementById('myOrdersLink');
+  
+  if (currentUser && !currentUser.isAdmin) {
+    if (myOrdersSection) myOrdersSection.style.display = 'block';
+    if (myOrdersLink) myOrdersLink.style.display = 'inline-block';
+    setupUserOrdersListener();
+  } else {
+    if (myOrdersSection) myOrdersSection.style.display = 'none';
+    if (myOrdersLink) myOrdersLink.style.display = 'none';
+    if (userOrdersUnsubscribe) {
+      userOrdersUnsubscribe();
+      userOrdersUnsubscribe = null;
+    }
+  }
+}
+
+function setupUserOrdersListener() {
+  if (!db || !currentUser) return;
+  
+  // Use createdBy field - real-time listener for user's orders only
+  var username = currentUser.username;
+  
+  // Clean up previous listener
+  if (userOrdersUnsubscribe) {
+    userOrdersUnsubscribe();
+  }
+  
+  // Real-time listener - ONLY fetches user's orders by username
+  userOrdersUnsubscribe = db.collection('orders').where('createdBy', '==', username).onSnapshot(function(snapshot) {
+    var orders = [];
+    snapshot.forEach(function(doc) {
+      var d = doc.data();
+      var order = { id: doc.id };
+      for (var key in d) order[key] = d[key];
+      orders.push(order);
+    });
+    
+    // Sort by date
+    orders.sort(function(a, b) {
+      return new Date(b.date || 0) - new Date(a.date || 0);
+    });
+    
+    renderUserOrders(orders);
+    console.log('My Orders synced:', orders.length);
+  }, function(error) {
+    console.error('Error fetching user orders:', error);
+  });
+}
+
+function renderUserOrders(orders) {
+  var container = document.getElementById('myOrdersList');
+  if (!container) return;
+  
+  if (orders.length === 0) {
+    container.innerHTML = '<p class="empty-state">No orders yet</p>';
+    return;
+  }
+  
+  var statusLabels = {
+    pending: 'Pending',
+    confirmed: 'Confirmed',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled'
+  };
+  
+  var statusColors = {
+    pending: '#f39c12',
+    confirmed: '#3498db',
+    shipped: '#9b59b6',
+    delivered: '#27ae60',
+    cancelled: '#e74c3c'
+  };
+  
+  var html = '';
+  orders.forEach(function(order) {
+    var total = Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3);
+    var dateStr = order.date ? new Date(order.date).toLocaleDateString() : '-';
+    var statusColor = statusColors[order.status] || '#95a5a6';
+    
+    html += '<div style="background:var(--darker);border-radius:8px;padding:15px;margin-bottom:15px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<strong>' + (order.customerName || 'Order') + '</strong>' +
+      '<span style="background:' + statusColor + ';padding:5px 10px;border-radius:5px;font-size:12px;">' + 
+      (statusLabels[order.status] || order.status) + '</span></div>' +
+      '<p style="color:var(--light-dim);font-size:14px;">📅 ' + dateStr + ' | 📦 ' + 
+      (order.items ? order.items.length : 0) + ' items</p>' +
+      '<p style="color:var(--primary);font-size:18px;font-weight:bold;">Total: ' + total + ' DT</p></div>';
+  });
+  
+  container.innerHTML = html;
 }
 
 function showLoginModal() {
@@ -529,7 +629,9 @@ if (checkoutForm) {
           items: cart.map(item => ({...item})),
           total: total,
           status: "pending",
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
+          userId: phone, // Store phone as userId for filtering
+          createdBy: currentUser ? currentUser.username : 'guest'
         });
         console.log('Order synced to Firebase!');
       } catch(e) {
@@ -644,26 +746,59 @@ function showToast(message, type = "success") {
 
 // ================= ORDER TRACKING =================
 function trackOrder() {
-  const phone = document.getElementById("trackPhone").value.trim();
-  const resultDiv = document.getElementById("trackingResult");
+  var phone = document.getElementById("trackPhone").value.trim();
+  var resultDiv = document.getElementById("trackingResult");
   
   if (!phone) {
     showToast("Please enter your phone number", "error");
     return;
   }
   
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
-  const userOrders = orders.filter(o => o.phone === phone);
-  
-  if (userOrders.length === 0) {
-    resultDiv.innerHTML = '<p class="no-orders">No orders found with this phone number</p>';
-    return;
+  // Use Firestore for tracking
+  if (db) {
+    resultDiv.innerHTML = '<p style="text-align:center;color:var(--light-dim);">Searching...</p>';
+    
+    db.collection('orders').where('phone', '==', phone).get().then(function(snapshot) {
+      var userOrders = [];
+      snapshot.forEach(function(doc) {
+        var d = doc.data();
+        var order = { id: doc.id };
+        for (var key in d) order[key] = d[key];
+        userOrders.push(order);
+      });
+      
+      if (userOrders.length === 0) {
+        resultDiv.innerHTML = '<p class="no-orders">No orders found with this phone number</p>';
+        return;
+      }
+      
+      // Sort by date, newest first
+      userOrders.sort(function(a, b) {
+        return new Date(b.date || 0) - new Date(a.date || 0);
+      });
+      
+      renderTrackingResult(userOrders, resultDiv);
+    }).catch(function(e) {
+      console.error('Error tracking order:', e);
+      resultDiv.innerHTML = '<p class="no-orders">Error searching orders</p>';
+    });
+  } else {
+    // Fallback to localStorage
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
+    var userOrders = orders.filter(function(o) { return o.phone === phone; });
+    
+    if (userOrders.length === 0) {
+      resultDiv.innerHTML = '<p class="no-orders">No orders found with this phone number</p>';
+      return;
+    }
+    
+    userOrders.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    renderTrackingResult(userOrders, resultDiv);
   }
-  
-  // Sort by date, newest first
-  userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  const statusIcons = {
+}
+
+function renderTrackingResult(orders, resultDiv) {
+  var statusIcons = {
     pending: "⏳",
     confirmed: "✓",
     shipped: "🚚",
@@ -671,7 +806,7 @@ function trackOrder() {
     cancelled: "❌"
   };
   
-  const statusLabels = {
+  var statusLabels = {
     pending: "Pending",
     confirmed: "Confirmed",
     shipped: "Shipped",
@@ -679,18 +814,34 @@ function trackOrder() {
     cancelled: "Cancelled"
   };
   
-  resultDiv.innerHTML = `
-    <div class="orders-list">
-      ${userOrders.map(order => `
-        <div class="order-card">
-          <div class="order-header">
-            <span class="order-id">#${order.id.slice(-6)}</span>
-            <span class="order-date">${new Date(order.date).toLocaleDateString()}</span>
-          </div>
-          <div class="order-status status-${order.status}">
-            <span class="status-icon">${statusIcons[order.status] || "⏳"}</span>
-            <span class="status-text">${statusLabels[order.status] || order.status}</span>
-          </div>
+  var html = '<div class="orders-list">';
+  orders.forEach(function(order) {
+    var total = Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3);
+    var dateStr = order.date ? new Date(order.date).toLocaleDateString() : '-';
+    
+    html += '<div class="order-card">' +
+      '<div class="order-header">' +
+      '<span class="order-id">#' + (order.id.slice ? order.id.slice(-6) : order.id) + '</span>' +
+      '<span class="order-date">' + dateStr + '</span></div>' +
+      '<div class="order-status status-' + order.status + '">' +
+      '<span class="status-icon">' + (statusIcons[order.status] || "⏳") + '</span>' +
+      '<span class="status-text">' + (statusLabels[order.status] || order.status) + '</span></div>' +
+      '<div class="order-items">';
+    
+    if (order.items) {
+      order.items.forEach(function(item) {
+        var itemTotal = Number.isInteger(item.price * item.qty) ? (item.price * item.qty) : (item.price * item.qty).toFixed(3);
+        html += '<div class="order-item"><span>' + (item.name || 'Product') + ' x' + item.qty + '</span>' +
+          '<span>' + itemTotal + ' DT</span></div>';
+      });
+    }
+    
+    html += '</div><div class="order-total"><span>Total:</span><span>' + total + ' DT</span></div></div>';
+  });
+  
+  html += '</div>';
+  resultDiv.innerHTML = html;
+}
           <div class="order-items">
             ${order.items.map(item => `
               <div class="order-item">
