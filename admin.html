@@ -308,90 +308,68 @@ try {
 
 <script>
 // ================= FIRESTORE SYNC SERVICE =================
-// Note: db will be accessed via window.db after Firebase loads
 
 const FirestoreSync = {
   orders: [],
-  unsubscribe: null,
   
-  // Initialize and set up real-time listeners
-  async init() {
-    const statusEl = document.getElementById('syncStatus');
+  init: function() {
+    console.log('FirestoreSync.init called');
+    var statusEl = document.getElementById('syncStatus');
     if (statusEl) statusEl.textContent = '● Connecting...';
     
-    // Wait for Firebase to be ready
-    if (!window.db) {
-      console.log('Waiting for Firebase...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
+    var self = this;
     
-    if (!window.db) {
+    if (window.db) {
+      window.db.collection('orders').onSnapshot(function(snapshot) {
+        self.orders = [];
+        snapshot.forEach(function(doc) {
+          self.orders.push({ id: doc.id, data: doc.data() });
+          var d = doc.data();
+          for (var key in d) {
+            self.orders[self.orders.length - 1][key] = d[key];
+          }
+        });
+        
+        self.orders.sort(function(a, b) {
+          return new Date(b.date || 0) - new Date(a.date || 0);
+        });
+        
+        if (statusEl) {
+          statusEl.textContent = '● Live';
+          statusEl.style.color = '#10b981';
+        }
+        
+        self.updateUI();
+        console.log('📦 Orders synced:', self.orders.length);
+      }, function(error) {
+        console.error('Firestore error:', error);
+        if (statusEl) {
+          statusEl.textContent = '● Offline';
+          statusEl.style.color = '#ef4444';
+        }
+      });
+      
+      console.log('Firestore listener setup complete');
+    } else {
       console.error('Firebase not initialized');
       if (statusEl) {
         statusEl.textContent = '● Error';
         statusEl.style.color = '#ef4444';
       }
-      return;
-    }
-    
-    try {
-      // Real-time listener for orders - ALL ADMINS SEE SAME DATA!
-      // Using onSnapshot for real-time updates
-      console.log('Setting up Firestore listener...');
-      
-      const unsubscribe = window.db.collection('orders').onSnapshot(
-        (snapshot) => {
-          this.orders = [];
-          snapshot.forEach(doc => {
-            this.orders.push({ id: doc.id, ...doc.data() });
-          });
-          
-          // Sort by date client-side (newest first)
-          this.orders.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-          
-          // Update sync status
-          if (statusEl) {
-            statusEl.textContent = '● Live';
-            statusEl.style.color = '#10b981';
-          }
-          
-          // Trigger UI updates
-          this.updateUI();
-          
-          console.log('📦 Orders synced:', this.orders.length, '-', new Date().toLocaleTimeString());
-        },
-        (error) => {
-          console.error('Firestore error:', error);
-          if (statusEl) {
-            statusEl.textContent = '● Offline';
-            statusEl.style.color = '#ef4444';
-          }
-        }
-      );
-      
-      this.unsubscribe = unsubscribe;
-      console.log('Firestore listener setup complete');
-    } catch(e) {
-      console.error('Init error:', e);
-      if (statusEl) statusEl.textContent = '● Error';
     }
   },
   
-  // Test Firestore connection
-  async testConnection() {
-    try {
-      const snapshot = await window.db.collection('orders').get();
-      console.log('Firestore test - Orders count:', snapshot.size);
+  testConnection: function() {
+    window.db.collection('orders').get().then(function(snapshot) {
       alert('Firestore connected! Total orders: ' + snapshot.size);
-    } catch(e) {
-      console.error('Firestore test failed:', e);
-      alert('Firestore connection failed: ' + e.message);
-    }
+    }).catch(function(e) {
+      alert('Firestore error: ' + e.message);
+    });
   },
-
-  // Update all UI components when orders change
-  updateUI() {
-    const orders = this.orders;
+  
+  updateUI: function() {
+    var orders = this.orders;
+    var self = this;
     
     // Dashboard stats
     if (document.getElementById('totalOrders')) {
@@ -399,39 +377,43 @@ const FirestoreSync = {
     }
     
     // Pending orders badge
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
+    var pendingCount = 0;
+    orders.forEach(function(o) { if (o.status === 'pending') pendingCount++; });
     if (document.getElementById('ordersBadge')) {
       document.getElementById('ordersBadge').innerText = pendingCount;
     }
     
     // Customers
-    const uniquePhones = [...new Set(orders.map(o => o.phone))];
+    var uniquePhones = [];
+    orders.forEach(function(o) { if (uniquePhones.indexOf(o.phone) === -1) uniquePhones.push(o.phone); });
     if (document.getElementById('totalCustomers')) {
       document.getElementById('totalCustomers').innerText = uniquePhones.length;
     }
     
     // Revenue
-    const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+    var totalRevenue = 0;
+    orders.forEach(function(o) { totalRevenue += o.total || 0; });
     if (document.getElementById('totalRevenue')) {
       document.getElementById('totalRevenue').innerText = Number.isInteger(totalRevenue) ? totalRevenue : totalRevenue.toFixed(3);
     }
     
     // Recent orders
-    const recentEl = document.getElementById('recentOrders');
+    var recentEl = document.getElementById('recentOrders');
     if (recentEl) {
       if (orders.length === 0) {
         recentEl.innerHTML = '<p class="empty-state">No orders yet</p>';
       } else {
-        const recent = orders.slice(0, 5);
-        recentEl.innerHTML = recent.map(order => `
-          <div class="order-card" style="padding: 15px; margin-bottom: 10px;">
-            <div class="order-info">
-              <h4>${order.customerName || 'Unknown'}</h4>
-              <p>${order.items?.length || 0} products - ${Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3)} DT</p>
-            </div>
-            <span class="order-status order-${order.status}">${this.getStatusText(order.status)}</span>
-          </div>
-        `).join('');
+        var recent = orders.slice(0, 5);
+        var html = '';
+        recent.forEach(function(order) {
+          var itemsCount = order.items ? order.items.length : 0;
+          var total = Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3);
+          html += '<div class="order-card" style="padding: 15px; margin-bottom: 10px;">' +
+            '<div class="order-info"><h4>' + (order.customerName || 'Unknown') + '</h4>' +
+            '<p>' + itemsCount + ' products - ' + total + ' DT</p></div>' +
+            '<span class="order-status order-' + order.status + '">' + self.getStatusText(order.status) + '</span></div>';
+        });
+        recentEl.innerHTML = html;
       }
     }
     
@@ -446,8 +428,8 @@ const FirestoreSync = {
   },
   
   // Render orders list
-  renderOrdersList(ordersData) {
-    const container = document.getElementById('ordersList');
+  renderOrdersList: function(ordersData) {
+    var container = document.getElementById('ordersList');
     if (!container) return;
     
     if (ordersData.length === 0) {
@@ -455,35 +437,36 @@ const FirestoreSync = {
       return;
     }
     
-    container.innerHTML = ordersData.map(order => `
-      <div class="order-card">
-        <div class="order-info">
-          <h4>${order.customerName || 'Unknown'}</h4>
-          <p>📞 ${order.phone || '-'} | 📍 ${order.city || '-'}</p>
-          <p>📅 ${order.date ? new Date(order.date).toLocaleDateString() : '-'}</p>
-        </div>
-        <div>
-          <p class="order-total">${Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3)} DT</p>
-        </div>
-        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-          <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
-          <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
-          <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-          <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-          <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-        </select>
-        <button class="btn-small btn-secondary" onclick="viewOrderDetail('${order.id}')">View</button>
-      </div>
-    `).join('');
+    var html = '';
+    var self = this;
+    ordersData.forEach(function(order) {
+      var total = Number.isInteger(order.total) ? order.total : (order.total || 0).toFixed(3);
+      var dateStr = order.date ? new Date(order.date).toLocaleDateString() : '-';
+      html += '<div class="order-card">' +
+        '<div class="order-info">' +
+        '<h4>' + (order.customerName || 'Unknown') + '</h4>' +
+        '<p>📞 ' + (order.phone || '-') + ' | 📍 ' + (order.city || '-') + '</p>' +
+        '<p>📅 ' + dateStr + '</p></div>' +
+        '<div><p class="order-total">' + total + ' DT</p></div>' +
+        '<select class="status-select" onchange="updateOrderStatus(\'' + order.id + '\', this.value)">' +
+        '<option value="pending" ' + (order.status === 'pending' ? 'selected' : '') + '>Pending</option>' +
+        '<option value="confirmed" ' + (order.status === 'confirmed' ? 'selected' : '') + '>Confirmed</option>' +
+        '<option value="shipped" ' + (order.status === 'shipped' ? 'selected' : '') + '>Shipped</option>' +
+        '<option value="delivered" ' + (order.status === 'delivered' ? 'selected' : '') + '>Delivered</option>' +
+        '<option value="cancelled" ' + (order.status === 'cancelled' ? 'selected' : '') + '>Cancelled</option>' +
+        '</select>' +
+        '<button class="btn-small btn-secondary" onclick="viewOrderDetail(\'' + order.id + '\')">View</button></div>';
+    });
+    container.innerHTML = html;
   },
   
   // Render customers
-  renderCustomers(ordersData) {
-    const grid = document.getElementById('customersGrid');
+  renderCustomers: function(ordersData) {
+    var grid = document.getElementById('customersGrid');
     if (!grid) return;
     
-    const customerMap = {};
-    ordersData.forEach(order => {
+    var customerMap = {};
+    ordersData.forEach(function(order) {
       if (!customerMap[order.phone]) {
         customerMap[order.phone] = { name: order.customerName, phone: order.phone, orders: 0, total: 0 };
       }
@@ -491,93 +474,103 @@ const FirestoreSync = {
       customerMap[order.phone].total += order.total || 0;
     });
     
-    const customers = Object.values(customerMap);
+    var customers = Object.values(customerMap);
     
     if (customers.length === 0) {
       grid.innerHTML = '<p class="empty-state">No customers</p>';
       return;
     }
     
-    grid.innerHTML = customers.map(c => `
-      <div class="customer-card">
-        <h4>${c.name || 'Unknown'}</h4>
-        <p>📞 ${c.phone}</p>
-        <p>🛒 ${c.orders} orders</p>
-        <p style="color: var(--primary); font-weight: bold;">💰 ${Number.isInteger(c.total) ? c.total : c.total.toFixed(3)} DT</p>
-      </div>
-    `).join('');
+    var html = '';
+    customers.forEach(function(c) {
+      var total = Number.isInteger(c.total) ? c.total : c.total.toFixed(3);
+      html += '<div class="customer-card">' +
+        '<h4>' + (c.name || 'Unknown') + '</h4>' +
+        '<p>📞 ' + c.phone + '</p>' +
+        '<p>🛒 ' + c.orders + ' orders</p>' +
+        '<p style="color: var(--primary); font-weight: bold;">💰 ' + total + ' DT</p></div>';
+    });
+    grid.innerHTML = html;
   },
   
   // Update analytics
-  updateAnalytics(ordersData) {
-    const totalRevenue = ordersData.reduce((sum, o) => sum + (o.total || 0), 0);
-    const totalOrders = ordersData.length;
-    const uniqueCustomers = [...new Set(ordersData.map(o => o.phone))].length;
-    const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  updateAnalytics: function(ordersData) {
+    var totalRevenue = 0;
+    ordersData.forEach(function(o) { totalRevenue += o.total || 0; });
+    var totalOrders = ordersData.length;
     
-    const els = ['analyticsRevenue', 'analyticsOrders', 'analyticsCustomers', 'analyticsAvgOrder'];
-    const vals = [totalRevenue, totalOrders, uniqueCustomers, avgOrder];
+    var uniqueCustomers = [];
+    ordersData.forEach(function(o) { if (uniqueCustomers.indexOf(o.phone) === -1) uniqueCustomers.push(o.phone); });
+    var uniqueCustomersCount = uniqueCustomers.length;
     
-    els.forEach((id, i) => {
-      const el = document.getElementById(id);
+    var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    
+    var els = ['analyticsRevenue', 'analyticsOrders', 'analyticsCustomers', 'analyticsAvgOrder'];
+    var vals = [totalRevenue, totalOrders, uniqueCustomersCount, avgOrder];
+    
+    els.forEach(function(id, i) {
+      var el = document.getElementById(id);
       if (el) el.innerText = Number.isInteger(vals[i]) ? vals[i] : vals[i].toFixed(3);
     });
     
     // Order stats by status
-    const statusCount = {};
-    ordersData.forEach(o => {
+    var statusCount = {};
+    ordersData.forEach(function(o) {
       statusCount[o.status] = (statusCount[o.status] || 0) + 1;
     });
     
-    const statsEl = document.getElementById('orderStats');
+    var statsEl = document.getElementById('orderStats');
     if (statsEl) {
-      const colors = { pending: 'var(--warning)', confirmed: 'var(--primary)', shipped: 'var(--secondary)', delivered: 'var(--success)', cancelled: 'var(--danger)' };
-      statsEl.innerHTML = Object.entries(statusCount).map(([status, count]) => `
-        <div class="analytics-item">
-          <span style="color: ${colors[status]}">${this.getStatusText(status)}</span>
-          <span style="font-weight: bold;">${count}</span>
-        </div>
-      `).join('') || '<p class="empty-state">No data</p>';
+      var colors = { pending: 'var(--warning)', confirmed: 'var(--primary)', shipped: 'var(--secondary)', delivered: 'var(--success)', cancelled: 'var(--danger)' };
+      var html = '';
+      var self = this;
+      Object.keys(statusCount).forEach(function(status) {
+        html += '<div class="analytics-item">' +
+          '<span style="color: ' + colors[status] + '">' + self.getStatusText(status) + '</span>' +
+          '<span style="font-weight: bold;">' + statusCount[status] + '</span></div>';
+      });
+      statsEl.innerHTML = html || '<p class="empty-state">No data</p>';
     }
   },
   
-  getStatusText(status) {
-    const texts = { pending: 'Pending', confirmed: 'Confirmed', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled' };
+  getStatusText: function(status) {
+    var texts = { pending: 'Pending', confirmed: 'Confirmed', shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled' };
     return texts[status] || status;
   },
   
   // Update order status in Firestore
-  async updateOrderStatus(orderId, newStatus) {
-    try {
-      await window.db.collection('orders').doc(orderId).update({
-        status: newStatus,
-        updatedAt: Date.now()
-      });
+  updateOrderStatus: function(orderId, newStatus) {
+    var self = this;
+    window.db.collection('orders').doc(orderId).update({
+      status: newStatus,
+      updatedAt: Date.now()
+    }).then(function() {
       console.log('Order updated:', orderId, newStatus);
-    } catch(e) {
-      console.error('Error updating order:', e);
+    }).catch(function(e) {
+      console.error('Error:', e);
       alert('Failed to update order');
-    }
+    });
   },
   
   // Clear all orders
-  async clearAllOrders() {
-    if (!confirm('⚠️ Delete ALL orders? This cannot be undone!')) return;
-    if (!confirm('Final confirmation: All orders will be permanently deleted.')) return;
+  clearAllOrders: function() {
+    if (!confirm('Delete ALL orders?')) return;
     
-    try {
-      const batch = db.batch();
-      const snapshot = await window.db.collection('orders').get();
-      snapshot.forEach(doc => batch.delete(doc.ref));
-      await batch.commit();
+    window.db.collection('orders').get().then(function(snapshot) {
+      var batch = window.db.batch();
+      snapshot.forEach(function(doc) {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    }).then(function() {
       console.log('All orders cleared');
-    } catch(e) {
-      console.error('Error clearing orders:', e);
-    }
+    }).catch(function(e) {
+      console.error('Error:', e);
+    });
   },
-  
+
   // Get orders for filtering
-  getOrders() {
+  getOrders: function() {
     return this.orders;
   }
 };
@@ -765,24 +758,17 @@ function showAdminPanel() {
   // Initialize Firestore sync
   if (typeof FirestoreSync !== 'undefined') {
     console.log('Calling FirestoreSync.init()...');
-    FirestoreSync.init().then(() => {
-      console.log('Admin ready with Firestore sync!');
-      const statusEl = document.getElementById('syncStatus');
-      if (statusEl) {
+    FirestoreSync.init();
+    var statusEl = document.getElementById('syncStatus');
+    if (statusEl) {
+      setTimeout(function() {
         statusEl.textContent = '● Live';
         statusEl.style.color = '#10b981';
-      }
-    }).catch(err => {
-      console.error('Firestore init failed:', err);
-      const statusEl = document.getElementById('syncStatus');
-      if (statusEl) {
-        statusEl.textContent = '● Error';
-        statusEl.style.color = '#ef4444';
-      }
-    });
+      }, 1000);
+    }
   } else {
     console.error('FirestoreSync not found');
-    const statusEl = document.getElementById('syncStatus');
+    var statusEl = document.getElementById('syncStatus');
     if (statusEl) {
       statusEl.textContent = '● Error';
       statusEl.style.color = '#ef4444';
