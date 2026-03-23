@@ -243,8 +243,8 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-window.addEventListener('scroll', () => {
-  const scrollBtn = document.querySelector('.scroll-top');
+window.addEventListener('scroll', function() {
+  var scrollBtn = document.querySelector('.scroll-top');
   if (scrollBtn) {
     if (window.scrollY > 300) {
       scrollBtn.classList.add('visible');

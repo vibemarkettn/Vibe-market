@@ -611,31 +611,31 @@ function restartOrders() {
 
 // View order detail
 function viewOrderDetail(orderId) {
-  const order = FirestoreSync.getOrders().find(o => o.id === orderId);
+  var order = FirestoreSync.getOrders().find(function(o) { return o.id === orderId; });
   if (!order) return;
   
-  const modal = document.getElementById("orderModal");
-  const details = document.getElementById("orderDetails");
+  var modal = document.getElementById("orderModal");
+  var details = document.getElementById("orderDetails");
   
-  details.innerHTML = `
-    <div style="padding: 25px;">
-      <div style="margin-bottom: 20px;">
-        <h4 style="color: var(--primary);">Customer Info</h4>
-        <p><strong>Name:</strong> ${order.customerName || '-'}</p>
-        <p><strong>Phone:</strong> ${order.phone || '-'}</p>
-        <p><strong>Email:</strong> ${order.email || '-'}</p>
-        <p><strong>City:</strong> ${order.city || '-'}</p>
-      </div>
-      
-      <div style="margin-bottom: 20px;">
-        <h4 style="color: var(--primary);">Products</h4>
-        ${(order.items || []).map(item => `
-          <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--darker); border-radius: 8px; margin-bottom: 8px;">
-            <span>${item.name || 'Product'} × ${item.qty || 1}</span>
-            <span style="color: var(--primary);">${((item.price || 0) * (item.qty || 1)).toFixed(3)} DT</span>
-          </div>
-        `).join('')}
-      </div>
+  var itemsHtml = '';
+  if (order.items) {
+    order.items.forEach(function(item) {
+      var itemTotal = ((item.price || 0) * (item.qty || 1)).toFixed(3);
+      itemsHtml += '<div style="display:flex;justify-content:space-between;padding:10px;background:var(--darker);border-radius:8px;margin-bottom:8px;">' +
+        '<span>' + (item.name || 'Product') + ' × ' + (item.qty || 1) + '</span>' +
+        '<span style="color:var(--primary);">' + itemTotal + ' DT</span></div>';
+    });
+  }
+  
+  details.innerHTML = '<div style="padding:25px;">' +
+    '<div style="margin-bottom:20px;">' +
+    '<h4 style="color:var(--primary);">Customer Info</h4>' +
+    '<p><strong>Name:</strong> ' + (order.customerName || '-') + '</p>' +
+    '<p><strong>Phone:</strong> ' + (order.phone || '-') + '</p>' +
+    '<p><strong>Email:</strong> ' + (order.email || '-') + '</p>' +
+    '<p><strong>City:</strong> ' + (order.city || '-') + '</p></div>' +
+    '<div style="margin-bottom:20px;">' +
+    '<h4 style="color:var(--primary);">Products</h4>' + itemsHtml + '</div>';
       
       <div style="text-align: left; font-size: 20px; font-weight: bold;">
         Total: ${(order.total || 0).toFixed(3)} DT
@@ -663,20 +663,23 @@ function closeOrderModal() {
 
 // Filter orders
 function filterOrders() {
-  const search = document.getElementById("orderSearch")?.value?.toLowerCase() || "";
-  const status = document.getElementById("orderStatusFilter")?.value || "all";
+  var searchEl = document.getElementById("orderSearch");
+  var statusEl = document.getElementById("orderStatusFilter");
+  var search = searchEl ? searchEl.value.toLowerCase() : "";
+  var status = statusEl ? statusEl.value : "all";
   
-  let filtered = FirestoreSync.getOrders();
+  var filtered = FirestoreSync.getOrders();
   
   if (status !== "all") {
-    filtered = filtered.filter(o => o.status === status);
+    filtered = filtered.filter(function(o) { return o.status === status; });
   }
   
   if (search) {
-    filtered = filtered.filter(o => 
-      (o.customerName || '').toLowerCase().includes(search) || 
-      (o.phone || '').includes(search)
-    );
+    filtered = filtered.filter(function(o) {
+      var nameMatch = o.customerName && o.customerName.toLowerCase().includes(search);
+      var phoneMatch = o.phone && o.phone.includes(search);
+      return nameMatch || phoneMatch;
+    });
   }
   
   FirestoreSync.renderOrdersList(filtered);
@@ -689,17 +692,19 @@ function refreshPreview() {
 
 // Navigation
 function showPage(pageName) {
-  document.querySelectorAll(".nav-item").forEach(item => {
+  var navItems = document.querySelectorAll(".nav-item");
+  navItems.forEach(function(item) {
     item.classList.remove("active");
     if (item.dataset.page === pageName) item.classList.add("active");
   });
   
-  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  var pages = document.querySelectorAll(".page");
+  pages.forEach(function(page) { page.classList.remove("active"); });
   
-  const pageEl = document.getElementById(pageName + "Page");
+  var pageEl = document.getElementById(pageName + "Page");
   if (pageEl) pageEl.classList.add("active");
   
-  const titles = {
+  var titles = {
     dashboard: "Dashboard",
     orders: "Orders Management",
     customers: "Customers",
@@ -725,27 +730,30 @@ let admin = DEFAULT_ADMIN; // Always use default - don't load from localStorage
 
 console.log('Admin login setup, admin:', admin);
 
-// Fallback login button click handler (in case form submit doesn't work)
-document.querySelector('.login-btn').addEventListener('click', function(e) {
-  e.preventDefault();
-  console.log('Login button clicked');
-  const username = document.getElementById("adminUsername").value.trim();
-  const password = document.getElementById("adminPassword").value.trim();
-  
-  if (username === admin.username && password === admin.password) {
-    sessionStorage.setItem("adminLoggedIn", "true");
-    showAdminPanel();
-  } else {
-    alert("Invalid username or password. Use: admin / admin123");
-  }
-});
+// Fallback login button click handler
+var loginBtn = document.querySelector('.login-btn');
+if (loginBtn) {
+  loginBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Login button clicked');
+    var username = document.getElementById("adminUsername").value.trim();
+    var password = document.getElementById("adminPassword").value.trim();
+    
+    if (username === admin.username && password === admin.password) {
+      sessionStorage.setItem("adminLoggedIn", "true");
+      showAdminPanel();
+    } else {
+      alert("Invalid username or password. Use: admin / admin123");
+    }
+  });
+}
 
 // Form submit handler
-document.getElementById("loginForm").addEventListener("submit", (e) => {
+document.getElementById("loginForm").addEventListener("submit", function(e) {
   e.preventDefault();
   console.log('Form submitted');
-  const username = document.getElementById("adminUsername").value.trim();
-  const password = document.getElementById("adminPassword").value.trim();
+  var username = document.getElementById("adminUsername").value.trim();
+  var password = document.getElementById("adminPassword").value.trim();
   
   console.log('Login attempt:', username, password);
   console.log('Expected:', admin.username, admin.password);
@@ -795,16 +803,17 @@ function logout() {
 }
 
 // Init
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
   updateDate();
-  const isLoggedIn = sessionStorage.getItem("adminLoggedIn");
+  var isLoggedIn = sessionStorage.getItem("adminLoggedIn");
   if (isLoggedIn === "true") {
     showAdminPanel();
   }
   
   // Setup navigation
-  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-    item.addEventListener('click', (e) => {
+  var navItems = document.querySelectorAll('.nav-item[data-page]');
+  navItems.forEach(function(item) {
+    item.addEventListener('click', function(e) {
       e.preventDefault();
       showPage(item.dataset.page);
     });
@@ -812,23 +821,26 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Settings form
-document.getElementById("adminSettingsForm")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const newUsername = document.getElementById("newUsername").value;
-  const newPassword = document.getElementById("newPassword").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-  
-  if (newPassword !== confirmPassword) {
-    alert("Passwords don't match!");
-    return;
-  }
-  
-  if (newUsername) admin.username = newUsername;
-  if (newPassword) admin.password = newPassword;
-  localStorage.setItem("admin", JSON.stringify(admin));
-  alert("Account updated!");
-  document.getElementById("adminSettingsForm").reset();
-});
+var settingsForm = document.getElementById("adminSettingsForm");
+if (settingsForm) {
+  settingsForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var newUsername = document.getElementById("newUsername").value;
+    var newPassword = document.getElementById("newPassword").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    
+    if (newPassword !== confirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    
+    if (newUsername) admin.username = newUsername;
+    if (newPassword) admin.password = newPassword;
+    localStorage.setItem("admin", JSON.stringify(admin));
+    alert("Account updated!");
+    document.getElementById("adminSettingsForm").reset();
+  });
+}
 </script>
 
 </body>

@@ -74,7 +74,7 @@ function resetSessionVisit() {
 }
 
 // ================= INITIALIZATION =================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
   trackVisit();
   initNavbar();
   initMusic();
