@@ -842,31 +842,14 @@ function renderTrackingResult(orders, resultDiv) {
   html += '</div>';
   resultDiv.innerHTML = html;
 }
-          <div class="order-items">
-            ${order.items.map(item => `
-              <div class="order-item">
-                <span>${item.name} x${item.qty}</span>
-                <span>${Number.isInteger(item.price * item.qty) ? item.price * item.qty : (item.price * item.qty).toFixed(3)} DT</span>
-              </div>
-            `).join('')}
-          </div>
-          <div class="order-total">
-            <span>Total:</span>
-            <span>${Number.isInteger(order.total) ? order.total : order.total.toFixed(3)} DT</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
 
 // ================= INIT =================
 function initLazyLoading() {
-  const images = document.querySelectorAll("img[loading='lazy']");
-  images.forEach(img => {
+  var images = document.querySelectorAll("img[loading='lazy']");
+  images.forEach(function(img) {
     img.style.opacity = "0";
     img.style.transition = "opacity 0.5s ease";
-    img.onload = () => img.style.opacity = "1";
+    img.onload = function() { img.style.opacity = "1"; };
     if (img.complete) img.style.opacity = "1";
   });
 }
