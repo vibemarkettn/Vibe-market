@@ -388,22 +388,7 @@ const FirestoreSync = {
       alert('Firestore connection failed: ' + e.message);
     }
   },
-        (error) => {
-          console.error('Firestore error:', error);
-          if (statusEl) {
-            statusEl.textContent = '● Offline';
-            statusEl.style.color = '#ef4444';
-          }
-        }
-      );
-      
-      console.log('Firestore listener setup complete');
-    } catch(e) {
-      console.error('Init error:', e);
-      if (statusEl) statusEl.textContent = '● Error';
-    }
-  },
-  
+
   // Update all UI components when orders change
   updateUI() {
     const orders = this.orders;
