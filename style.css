@@ -298,6 +298,7 @@ body {
 #products {
   padding: 80px 5%;
   background: var(--dark);
+  min-height: 50vh;
 }
 
 #products h3 {
@@ -383,6 +384,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 25px;
+  min-height: 200px;
 }
 
 .product-card {
@@ -1003,7 +1005,7 @@ body {
   .hero { padding: 100px 15px 40px; }
   .hero-logo { width: 150px; height: 150px; padding: 6px; }
   .hero h2 { font-size: 28px; }
-  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 10px; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 10px; display: flex !important; }
   .product-card { padding: 12px; }
   .product-card img { height: 110px; }
   .product-card h4 { font-size: 13px; }
@@ -1016,6 +1018,9 @@ body {
   .music-player button { width: 42px; height: 42px; font-size: 16px; }
   .scroll-top { bottom: 80px; right: 15px; width: 42px; height: 42px; }
   .vibe-btn { padding: 12px 20px; font-size: 13px; }
+  #products { padding: 60px 3%; min-height: 40vh; }
+  .search-box { margin-bottom: 15px; }
+  .categories-wrapper { margin-bottom: 20px; }
 }
 
 /* ================= LOGIN MODAL ================= */
