@@ -208,14 +208,21 @@ const OrderSync = {
       throw new Error('Firestore not ready');
     }
     try {
-      const docRef = await db.collection('orders').add({
+      console.log('Creating order in Firestore:', orderData);
+      var docRef = await db.collection('orders').add({
         ...orderData,
         createdAt: Date.now()
       });
       console.log('Order created in Firestore:', docRef.id);
+      
+      // Verify it was created
+      var doc = await docRef.get();
+      console.log('Order verification:', doc.exists);
+      
       return { id: docRef.id, ...orderData };
     } catch (e) {
       console.error('Firestore create error:', e);
+      alert('Error creating order: ' + e.message);
       throw e;
     }
   }

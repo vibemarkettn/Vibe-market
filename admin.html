@@ -320,14 +320,23 @@ const FirestoreSync = {
     var self = this;
     
     if (window.db) {
+      // Test: First get all orders once to verify connection
+      window.db.collection('orders').get().then(function(snapshot) {
+        console.log('Initial orders check: ' + snapshot.size + ' orders');
+      }).catch(function(e) {
+        console.error('Error fetching initial orders:', e);
+      });
+      
+      // Set up real-time listener
       window.db.collection('orders').onSnapshot(function(snapshot) {
         self.orders = [];
         snapshot.forEach(function(doc) {
-          self.orders.push({ id: doc.id, data: doc.data() });
-          var d = doc.data();
-          for (var key in d) {
-            self.orders[self.orders.length - 1][key] = d[key];
+          var orderData = doc.data();
+          var order = { id: doc.id };
+          for (var key in orderData) {
+            order[key] = orderData[key];
           }
+          self.orders.push(order);
         });
         
         self.orders.sort(function(a, b) {
@@ -335,12 +344,12 @@ const FirestoreSync = {
         });
         
         if (statusEl) {
-          statusEl.textContent = '● Live';
+          statusEl.textContent = '● Live (' + self.orders.length + ')';
           statusEl.style.color = '#10b981';
         }
         
         self.updateUI();
-        console.log('📦 Orders synced:', self.orders.length);
+        console.log('📦 Orders synced:', self.orders.length, '-', new Date().toLocaleTimeString());
       }, function(error) {
         console.error('Firestore error:', error);
         if (statusEl) {
