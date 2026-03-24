@@ -143,7 +143,7 @@ const AdminPage = () => {
       <aside className="hidden md:flex w-60 bg-card border-r border-border flex-col">
         <div className="p-5 border-b border-border">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/Vibe-market/images/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full" />
+            <img src="/images/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full" />
             <span className="font-display font-bold text-gradient">VIBE ADMIN</span>
           </Link>
         </div>
