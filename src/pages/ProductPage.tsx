@@ -36,7 +36,7 @@ const ProductPage = () => {
       <CartModal />
       <section className="min-h-screen pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-5xl">
-          <Link to="/#products" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
+          <Link to="/Vibe-market/#products" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> {lang === "ar" ? "العودة" : "Back to products"}
           </Link>
 
