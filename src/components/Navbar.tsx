@@ -11,10 +11,10 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: lang === "ar" ? "الرئيسية" : "Home" },
-    { to: "/#products", label: lang === "ar" ? "المنتجات" : "Products" },
-    { to: "/#faq", label: lang === "ar" ? "الأسئلة" : "FAQ" },
-    { to: "/#contact", label: lang === "ar" ? "تواصل" : "Contact" },
-    { to: "/#track", label: lang === "ar" ? "تتبع" : "Track" },
+    { to: "/Vibe-market/#products", label: lang === "ar" ? "المنتجات" : "Products" },
+    { to: "/Vibe-market/#faq", label: lang === "ar" ? "الأسئلة" : "FAQ" },
+    { to: "/Vibe-market/#contact", label: lang === "ar" ? "تواصل" : "Contact" },
+    { to: "/Vibe-market/#track", label: lang === "ar" ? "تتبع" : "Track" },
   ];
 
   return (
