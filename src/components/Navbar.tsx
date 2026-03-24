@@ -11,10 +11,10 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: lang === "ar" ? "الرئيسية" : "Home" },
-    { to: "/Vibe-market/#products", label: lang === "ar" ? "المنتجات" : "Products" },
-    { to: "/Vibe-market/#faq", label: lang === "ar" ? "الأسئلة" : "FAQ" },
-    { to: "/Vibe-market/#contact", label: lang === "ar" ? "تواصل" : "Contact" },
-    { to: "/Vibe-market/#track", label: lang === "ar" ? "تتبع" : "Track" },
+    { to: "/#products", label: lang === "ar" ? "المنتجات" : "Products" },
+    { to: "/#faq", label: lang === "ar" ? "الأسئلة" : "FAQ" },
+    { to: "/#contact", label: lang === "ar" ? "تواصل" : "Contact" },
+    { to: "/#track", label: lang === "ar" ? "تتبع" : "Track" },
   ];
 
   return (
@@ -25,7 +25,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="flex items-center gap-3">
-          <img src="/Vibe-market/images/logo.jpg" alt="Vibe Market" className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30" />
+          <img src="/images/logo.jpg" alt="Vibe Market" className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30" />
           <span className="font-display text-xl font-bold text-gradient">VIBE MARKET</span>
         </Link>
 

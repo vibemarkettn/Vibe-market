@@ -6,7 +6,7 @@ import { copyFileSync, mkdirSync, existsSync } from "fs";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/Vibe-market/",
+  base: "./",
   server: {
     host: "::",
     port: 8080,

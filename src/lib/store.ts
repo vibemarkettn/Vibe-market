@@ -33,15 +33,15 @@ export interface Order {
 }
 
 export const PRODUCTS: Record<string, Product> = {
-  led: { id: "led", name: "LED RGB متعدد الألوان", price: 25, img: "/Vibe-market/images/ledd.jpg", stock: 10, category: "led", desc: "شريط LED RGB متعدد الألوان مع تحكم عن بُعد", specs: ["ألوان متعددة", "تحكم عن بُعد", "سهل التركيب"], active: true },
-  casque: { id: "casque", name: "Casque Bluetooth CAT EAR", price: 25, img: "/Vibe-market/images/casque.jpg", stock: 5, category: "audio", desc: "سماعات رأس بلوتوث على شكل آذان القط", specs: ["بلوتوث 5.0", "بطارية طويلة", "إضاءة LED"], active: true },
-  mouse: { id: "mouse", name: "Elite RGB Wireless Mouse", price: 30, img: "/Vibe-market/images/mouse.jpg", stock: 7, category: "accessories", desc: "ماوس لاسلكي RGB احترافي", specs: ["لاسلكي", "RGB إضاءة", "دقة عالية"], active: true },
-  projector: { id: "projector", name: "LED Star Projector + Bluetooth", price: 25, img: "/Vibe-market/images/star.jpg", stock: 7, category: "led", desc: "مشروع النجوم LED مع بلوتوث", specs: ["بلوتوث", "مكبر صوت", "تغيير الألوان"], active: true },
-  mong: { id: "mong", name: "T800 Ultra Smart Watch", price: 30, img: "/Vibe-market/images/mong.jpg", stock: 7, category: "accessories", desc: "ساعة ذكية T800 Ultra", specs: ["49mm", "مقاومة للماء", "شاشة AMOLED"], active: true },
-  mic: { id: "mic", name: "Professional Studio Kit", price: 35.9, img: "/Vibe-market/images/mic.jpg", stock: 7, category: "audio", desc: "مجموعة استوديو احترافية", specs: ["جودة عالية", "متين", "سهل الاستخدام"], active: true },
-  bafle: { id: "bafle", name: "HAUT PARLEUR RGB", price: 75, img: "/Vibe-market/images/bafle.jpg", stock: 7, category: "audio", desc: "مكبر صوت RGB", specs: ["Bass قوي", "RGB إضاءة", "بلوتوث"], active: true },
-  kit: { id: "kit", name: "AirPod A9 Pro", price: 45, img: "/Vibe-market/images/icot.jpg", stock: 7, category: "audio", desc: "سماعات لاسلكية A9 Pro", specs: ["شاشة لمسية", "عزل ضوضاء", "بطارية طويلة"], active: true },
-  cass: { id: "cass", name: "BH02 BlackWave Headset", price: 34, img: "/Vibe-market/images/cass.jpg", stock: 7, category: "audio", desc: "سماعة رأس BH02", specs: ["Surround Sound", "ميكروفون", "مريحة"], active: true },
+  led: { id: "led", name: "LED RGB متعدد الألوان", price: 25, img: "/images/ledd.jpg", stock: 10, category: "led", desc: "شريط LED RGB متعدد الألوان مع تحكم عن بُعد", specs: ["ألوان متعددة", "تحكم عن بُعد", "سهل التركيب"], active: true },
+  casque: { id: "casque", name: "Casque Bluetooth CAT EAR", price: 25, img: "/images/casque.jpg", stock: 5, category: "audio", desc: "سماعات رأس بلوتوث على شكل آذان القط", specs: ["بلوتوث 5.0", "بطارية طويلة", "إضاءة LED"], active: true },
+  mouse: { id: "mouse", name: "Elite RGB Wireless Mouse", price: 30, img: "/images/mouse.jpg", stock: 7, category: "accessories", desc: "ماوس لاسلكي RGB احترافي", specs: ["لاسلكي", "RGB إضاءة", "دقة عالية"], active: true },
+  projector: { id: "projector", name: "LED Star Projector + Bluetooth", price: 25, img: "/images/star.jpg", stock: 7, category: "led", desc: "مشروع النجوم LED مع بلوتوث", specs: ["بلوتوث", "مكبر صوت", "تغيير الألوان"], active: true },
+  mong: { id: "mong", name: "T800 Ultra Smart Watch", price: 30, img: "/images/mong.jpg", stock: 7, category: "accessories", desc: "ساعة ذكية T800 Ultra", specs: ["49mm", "مقاومة للماء", "شاشة AMOLED"], active: true },
+  mic: { id: "mic", name: "Professional Studio Kit", price: 35.9, img: "/images/mic.jpg", stock: 7, category: "audio", desc: "مجموعة استوديو احترافية", specs: ["جودة عالية", "متين", "سهل الاستخدام"], active: true },
+  bafle: { id: "bafle", name: "HAUT PARLEUR RGB", price: 75, img: "/images/bafle.jpg", stock: 7, category: "audio", desc: "مكبر صوت RGB", specs: ["Bass قوي", "RGB إضاءة", "بلوتوث"], active: true },
+  kit: { id: "kit", name: "AirPod A9 Pro", price: 45, img: "/images/icot.jpg", stock: 7, category: "audio", desc: "سماعات لاسلكية A9 Pro", specs: ["شاشة لمسية", "عزل ضوضاء", "بطارية طويلة"], active: true },
+  cass: { id: "cass", name: "BH02 BlackWave Headset", price: 34, img: "/images/cass.jpg", stock: 7, category: "audio", desc: "سماعة رأس BH02", specs: ["Surround Sound", "ميكروفون", "مريحة"], active: true },
 };
 
 export const CATEGORIES = [
