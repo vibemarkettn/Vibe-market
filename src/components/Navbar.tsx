@@ -25,7 +25,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="flex items-center gap-3">
-          <img src="/images/logo.jpg" alt="Vibe Market" className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30" />
+          <img src="/Vibe-market/images/logo.jpg" alt="Vibe Market" className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30" />
           <span className="font-display text-xl font-bold text-gradient">VIBE MARKET</span>
         </Link>
 

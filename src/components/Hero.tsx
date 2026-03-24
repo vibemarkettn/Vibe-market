@@ -23,7 +23,7 @@ const Hero = () => {
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="w-48 h-48 md:w-56 md:h-56 mx-auto mb-8 rounded-full bg-gradient p-1.5 shadow-glow-strong"
         >
-          <img src="/images/logo.jpg" alt="Vibe Market" className="w-full h-full rounded-full object-cover bg-background" />
+          <img src="/Vibe-market/images/logo.jpg" alt="Vibe Market" className="w-full h-full rounded-full object-cover bg-background" />
         </motion.div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-extrabold text-gradient mb-4">
